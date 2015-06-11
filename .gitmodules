@@ -1,0 +1,6 @@
+[submodule "websocketpp"]
+	path = websocketpp
+	url = https://github.com/zaphoyd/websocketpp
+[submodule "rapidjson"]
+	path = rapidjson
+	url = https://github.com/miloyip/rapidjson.git
