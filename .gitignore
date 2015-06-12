@@ -37,3 +37,4 @@
 .sconf_temp
 .sconsign.dblite
 config.log
+config.py

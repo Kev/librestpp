@@ -5,15 +5,75 @@
 import SCons.SConf
 import os
 
+
+### Parameters
+
+vars = Variables(os.path.join(Dir("#").abspath, "config.py"))
+vars.Add('cc', "C compiler")
+vars.Add('cxx', "C++ compiler")
+vars.Add('ccflags', "Extra C/C++/ObjC compiler flags")
+vars.Add('cxxflags', "Extra C++ compiler flags")
+vars.Add('link', "Linker")
+vars.Add('linkflags', "Extra linker flags")
+vars.Add('ar', "Archiver (ar or lib)")
+if os.name == "nt":
+        vars.Add('mt', "manifest tool")
+vars.Add(PathVariable("boost_includedir", "Boost headers location", None, PathVariable.PathAccept))
+vars.Add(PathVariable("boost_libdir", "Boost library location", None, PathVariable.PathAccept))
+vars.Add(BoolVariable("optimize", "Compile with optimizations turned on", "no"))
+vars.Add(BoolVariable("debug", "Compile with debug information", "yes"))
+vars.Add(BoolVariable("set_iterator_debug_level", "Set _ITERATOR_DEBUG_LEVEL=0", "yes"))
 ### presetup
 
-env = Environment()
+env = Environment(variables = vars)
+Help(vars.GenerateHelpText(env))
 conf_env = env.Clone()
 conf = Configure(conf_env)
 
+if "cc" in env :
+    env["CC"] = env["cc"]
+if "cxx" in env :
+    env["CXX"] = env["cxx"]
+if "ar" in env :
+    env["AR"] = env["ar"]
+if "link" in env :
+    env["SHLINK"] = env["link"]
+    env["LINK"] = env["link"]
+for flags_type in ["ccflags", "cxxflags", "linkflags"] :
+    if flags_type in env :
+        if isinstance(env[flags_type], str) :
+            env[flags_type.upper()] = env[flags_type].split(" ")
+        else :
+            env[flags_type.upper()] = env[flags_type]
+if env["optimize"] :
+    if env["PLATFORM"] == "win32" :
+        env.Append(CCFLAGS = ["/O2"])
+    else :
+        env.Append(CCFLAGS = ["-O2"])
+if env["debug"] :
+    if env["PLATFORM"] == "win32" :
+        env.Append(CCFLAGS = ["/Zi"])
+        env.Append(LINKFLAGS = ["/DEBUG"])
+        if GetOption("num_jobs") > 1 :
+            env["CCPDBFLAGS"] = '/Fd${TARGET}.pdb'
+            env["PDB"] = '${TARGET.base}.pdb'
+        if env["set_iterator_debug_level"] :
+            env.Append(CPPDEFINES = ["_ITERATOR_DEBUG_LEVEL=0"])
+        if env["optimize"] :
+            env.Append(LINKFLAGS = ["/OPT:NOREF"])
+            env.Append(CCFLAGS = ["/MD"])
+        else :
+            env.Append(CCFLAGS = ["/MDd"])
+    else :
+        env.Append(CCFLAGS = ["-g"])
+elif env["PLATFORM"] == "win32" :
+    env.Append(CCFLAGS = ["/MD"])
+
 root = Dir(".").abspath
 
-Decider('MD5-timestamp') # Slightly less slow change checking
+env.Decider('MD5-timestamp') # Slightly less slow change checking
+env.SetOption("max_drift", 1)
+env.SetOption("implicit_cache", True)
 
 if not conf.CheckCXX() or not conf.CheckCC() :
     print "Error: You need a working compiler"
@@ -32,10 +92,6 @@ env.AppendUnique(CCFLAGS=['-g'])
 
 boost_conf_env = conf_env.Clone()
 boost_flags = {}
-
-boost_dir = '/usr/local/brew/Cellar/boost/1.57.0/'
-env['boost_libdir'] = boost_dir + 'lib'
-env['boost_includedir'] = boost_dir + 'include'
 
 if env.get("boost_libdir", None) :
     boost_flags["LIBPATH"] = [env["boost_libdir"]]
