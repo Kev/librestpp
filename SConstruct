@@ -19,6 +19,8 @@ if not conf.CheckCXX() or not conf.CheckCC() :
     print "Error: You need a working compiler"
     Exit(1)
 
+conf.Finish()
+
 if ARGUMENTS.get("force-configure", 0) :
     SCons.SConf.SetCacheMode("force")
 
@@ -45,8 +47,11 @@ if env.get("boost_includedir", None) :
         # Unfortunately, this also disables dependency tracking
         boost_flags["CPPFLAGS"] = [("-isystem", env["boost_includedir"])]
 
+boost_conf_env.MergeFlags(boost_flags)
 
-boostLibs = [("thread-mt", None), ("chrono", None), ("system", "system/system_error.hpp")]
+conf = Configure(boost_conf_env)
+
+boostLibs = [("thread", None), ("chrono", None), ("system", "system/system_error.hpp")]
 allLibsPresent = True
 libNames = []
 
@@ -55,8 +60,17 @@ for (lib, header) in boostLibs :
         header = "boost/" + header
     else :
         header = "boost/" + lib + ".hpp"
-    libName = "boost_" + lib
-    libNames.append(libName)
+    if not conf.CheckCXXHeader(header) :
+        allLibsPresent = False
+        break
+    if env["PLATFORM"] != "win32" :
+        libName = "boost_" + lib
+        if not conf.CheckLib(libName, language='CXX') :
+            libName += "-mt"
+            if not conf.CheckLib(libName, language='CXX') :
+                allLibsPresent = False
+                break
+        libNames.append(libName)
 if allLibsPresent :
     env["BOOST_FLAGS"] = boost_flags
     if env["PLATFORM"] != "win32" :
@@ -64,6 +78,8 @@ if allLibsPresent :
 else:
     print "Can't find boost"
     Exit(1)
+
+conf.Finish()
 
 # Websocketpp
 
