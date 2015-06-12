@@ -4,13 +4,12 @@
  * See the LICENSE file for more information.
  */
 
-#include "RESTServer.h"
-
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 
-#include "JSONRESTHandler.h"
+#include <restpp/JSONRESTHandler.h>
+#include <restpp/RESTServer.h>
 
 using namespace librestpp;
 

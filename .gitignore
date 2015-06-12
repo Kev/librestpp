@@ -26,3 +26,14 @@
 *.exe
 *.out
 *.app
+
+# debug info
+*.dSYM
+
+# Code completion hints
+.clang_complete
+
+# SCons working data
+.sconf_temp
+.sconsign.dblite
+config.log

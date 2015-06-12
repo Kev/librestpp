@@ -1,0 +1,32 @@
+# Copyright (c) 2015 Isode Limited.
+# All rights reserved.
+# See the LICENSE file for more information.
+
+Import("env")
+import os
+
+if env["SCONS_STAGE"] == "flags" :
+	restpp_env = env.Clone()
+	restpp_env.Append(LIBPATH = [Dir(".").abspath])
+	restpp_env.Append(LIBS = ['restpp'])
+	for dep in ['BOOST', 'WEBSOCKETPP', 'RAPIDJSON']:
+		restpp_env.Append(LIBPATH = restpp_env[dep+'_FLAGS'].get('LIBPATH', []))
+		restpp_env.Append(LIBS = restpp_env[dep+'_FLAGS'].get('LIBS', []))
+	restpp_env.Append(CPPPATH = [Dir("..").abspath])
+	restpp_flags = {}
+	restpp_flags["LIBPATH"] = restpp_env.get("LIBPATH", [])
+	restpp_flags["LIBS"] = restpp_env.get("LIBS", [])
+	restpp_flags["CPPPATH"] = restpp_env.get("CPPPATH", [])
+	env["RESTPP_FLAGS"] = restpp_flags
+elif env["SCONS_STAGE"] == "build" :
+	restpp_env = env.Clone()
+	restpp_env.MergeFlags(restpp_env['BOOST_FLAGS'])
+	restpp_env.MergeFlags(restpp_env['WEBSOCKETPP_FLAGS'])
+	restpp_env.MergeFlags(restpp_env['RAPIDJSON_FLAGS'])
+	sources = [
+				"JSON.cpp",
+				"JSONRESTHandler.cpp",
+				"RESTRequest.cpp",
+				"RestServer.cpp"
+			  ]
+	restpp_env.Library("librestpp", sources)
