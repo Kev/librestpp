@@ -26,6 +26,7 @@ elif env["SCONS_STAGE"] == "build" :
 	sources = [
 				"JSON.cpp",
 				"JSONRESTHandler.cpp",
+				"MemoryFileHandler.cpp",
 				"RESTRequest.cpp",
 				"RestServer.cpp"
 			  ]

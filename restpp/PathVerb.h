@@ -6,18 +6,22 @@
 
 #pragma once
 
-struct PathVerb {
-	enum RESTVerb {GET, POST, INVALID};
-	PathVerb(const std::string& path, RESTVerb verb) : path(path), verb(verb) {}
-	bool operator<(const PathVerb& other) const
-	{
-		return other.verb == verb ? (path < other.path) : verb < other.verb;
-	}
-	bool operator==(const PathVerb& other) const
-	{
-		return other.verb == verb && path == other.path;
-	}
+namespace librestpp {
 
-	std::string path;
-	RESTVerb verb;
-};
+	struct PathVerb {
+		enum RESTVerb {GET, POST, INVALID};
+		PathVerb(const std::string& path, RESTVerb verb) : path(path), verb(verb) {}
+		bool operator<(const PathVerb& other) const
+		{
+			return other.verb == verb ? (path < other.path) : verb < other.verb;
+		}
+		bool operator==(const PathVerb& other) const
+		{
+			return other.verb == verb && path == other.path;
+		}
+
+		std::string path;
+		RESTVerb verb;
+	};
+
+}

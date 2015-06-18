@@ -77,6 +77,10 @@ class RESTServer::Private {
 			handlers_[pathVerb] = handler;
 		}
 
+		void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler) {
+			defaultHandler_ = handler;
+		}
+
 		void poll() {
 			server_.poll();
 		}
@@ -102,8 +106,12 @@ class RESTServer::Private {
 
 			boost::shared_ptr<JSONRESTHandler> handler = handlers_[pathVerb];
 			if (verb != PathVerb::INVALID && !!handler) {
-				/*websocketpp::lib::error_code ec = */connection->defer_http_response();
+				/*websocketpp::lib::error_code ec =*/connection->defer_http_response();
 				handler->handleRequest(request);
+			}
+			else if (!!defaultHandler_) {
+				/*websocketpp::lib::error_code ec =*/connection->defer_http_response();
+				defaultHandler_->handleRequest(request);
 			}
 			else {
 				connection->set_body("Not found");
@@ -113,6 +121,7 @@ class RESTServer::Private {
 
 		websocketpp::server<websocketpp::config::asio> server_;
 		std::map<PathVerb, boost::shared_ptr<JSONRESTHandler> > handlers_;
+		boost::shared_ptr<JSONRESTHandler> defaultHandler_;
 };
 
 RESTServer::RESTServer(int port) {
@@ -122,6 +131,10 @@ RESTServer::RESTServer(int port) {
 
 RESTServer::~RESTServer() {
 
+}
+
+void RESTServer::addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler) {
+	private_->addDefaultGetEndpoint(handler);
 }
 
 void RESTServer::addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler) {

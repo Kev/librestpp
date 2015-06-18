@@ -22,6 +22,7 @@ namespace librestpp {
 			RESTServer(int port);
 			virtual ~RESTServer();
 
+			void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler);
 			void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler);
 			void poll();
 

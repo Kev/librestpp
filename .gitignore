@@ -38,3 +38,6 @@
 .sconsign.dblite
 config.log
 config.py
+
+# OS X
+.DS_Store

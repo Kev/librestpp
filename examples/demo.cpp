@@ -15,7 +15,7 @@ using namespace librestpp;
 
 class StringHandler : public JSONRESTHandler {
 	public:
-		StringHandler(const std::string result) : result_(result) {}
+		StringHandler(const std::string& result) : result_(result) {}
 		virtual void handleRequest(boost::shared_ptr<RESTRequest> request) {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			request->addReplyContent(result_);
