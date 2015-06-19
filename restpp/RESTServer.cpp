@@ -38,7 +38,9 @@ class RESTRequestInt : public RESTRequest {
 
 		void sendReply() {
 			connection_->set_body(reply_.str());
+#ifndef RESTPP_NO_DEFER
 			/*websocketpp::lib::error_code ec = */connection_->send_http_response();
+#endif
 		}
 
 	private:
@@ -113,7 +115,9 @@ class RESTServer::Private {
 				if (!handler) {
 					handler = defaultHandler_;
 				}
+#ifndef RESTPP_NO_DEFER
 				/*websocketpp::lib::error_code ec =*/connection->defer_http_response();
+#endif
 				handler->handleRequest(request);
 			}
 			else {
