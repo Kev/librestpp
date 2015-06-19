@@ -94,8 +94,16 @@ int main(int argc, const char* argv[])
 {
 	librestpp::RESTServer server(1080);
 
+	std::stringstream longString;
+	for (int i = 0; i < 70000; i++) {
+		longString << "Arr ";
+	}
+
 	boost::shared_ptr<JSONRESTHandler> demoHandler = boost::make_shared<StringHandler>("hi");
 	server.addJSONEndpoint(PathVerb("/demo", PathVerb::GET), demoHandler);
+
+	boost::shared_ptr<JSONRESTHandler> longHandler = boost::make_shared<StringHandler>(longString.str());
+	server.addJSONEndpoint(PathVerb("/long", PathVerb::GET), longHandler);
 
 	boost::shared_ptr<JSONRESTHandler> echoGetHandler = boost::make_shared<StringHandler>("Echos must be POST");
 	server.addJSONEndpoint(PathVerb("/echo", PathVerb::GET), echoGetHandler);
@@ -109,14 +117,7 @@ int main(int argc, const char* argv[])
 	boost::shared_ptr<JSONRESTHandler> chefHandler = boost::make_shared<JSONChefHandler>();
 	server.addJSONEndpoint(PathVerb("/chef", PathVerb::POST), chefHandler);
 
-	std::cout << "Starting demo server on port 1080, at paths /demo and /echo (GET) and /echo, /echotext and /chef (POST)" << std::endl;
-	while (true) {
-		// Not an optimal event loop!
-		boost::xtime xt;
-		boost::xtime_get(&xt, boost::TIME_UTC_);
-		int msecs = 100;
-		xt.nsec += msecs*1000000;
-		boost::thread::sleep(xt);
-		server.poll();
-	}
+	std::cout << "Starting demo server on port 1080, at paths /demo, /long and /echo (GET) and /echo, /echotext and /chef (POST)" << std::endl;
+
+	server.run();
 }

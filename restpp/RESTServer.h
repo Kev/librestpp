@@ -25,6 +25,7 @@ namespace librestpp {
 			void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler);
 			void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler);
 			void poll();
+			void run();
 
 		private:
 			//TODO: Get rid of PIMPL and expose enough websocketpp for eventloop integration

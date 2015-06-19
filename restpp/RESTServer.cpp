@@ -85,6 +85,10 @@ class RESTServer::Private {
 			server_.poll();
 		}
 
+		void run() {
+			server_.run();
+		}
+
 	private:
 		void handleRequest(websocketpp::connection_hdl handle) {
 			websocketpp::server<websocketpp::config::asio>::connection_ptr connection = server_.get_con_from_hdl(handle);
@@ -105,13 +109,12 @@ class RESTServer::Private {
 			boost::shared_ptr<RESTRequest> request = boost::make_shared<RESTRequestInt>(pathVerb, body, connection);
 
 			boost::shared_ptr<JSONRESTHandler> handler = handlers_[pathVerb];
-			if (verb != PathVerb::INVALID && !!handler) {
+			if (verb != PathVerb::INVALID && (!!handler || !!defaultHandler_)) {
+				if (!handler) {
+					handler = defaultHandler_;
+				}
 				/*websocketpp::lib::error_code ec =*/connection->defer_http_response();
 				handler->handleRequest(request);
-			}
-			else if (!!defaultHandler_) {
-				/*websocketpp::lib::error_code ec =*/connection->defer_http_response();
-				defaultHandler_->handleRequest(request);
 			}
 			else {
 				connection->set_body("Not found");
@@ -143,6 +146,10 @@ void RESTServer::addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSO
 
 void RESTServer::poll() {
 	private_->poll();
+}
+
+void RESTServer::run() {
+	private_->run();
 }
 
 }
