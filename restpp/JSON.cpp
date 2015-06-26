@@ -85,54 +85,53 @@ std::map<std::string, JSONValue::ref> JSONObject::getValues() {
 	return values_;
 }
 
-rapidjson::Value& jsonValueToRapidJSON(JSONValue* value, rapidjson::Document* document) {
+void jsonValueToRapidJSON(JSONValue* value, rapidjson::Value& rapidValue, rapidjson::Document& document) {
 	JSONInt* intValue = dynamic_cast<JSONInt*>(value);
 	if (intValue) {
-		rapidjson::Value rj;
-		rj.SetInt(intValue->getValue());
-		return rj;
+		rapidValue.SetInt(intValue->getValue());
+		return;
 	}
 	JSONString* stringValue = dynamic_cast<JSONString*>(value);
 	if (stringValue) {
-		rapidjson::Value rj;
-		rj.SetString(stringValue->getValue().c_str(), stringValue->getValue().size());
-		return rj;
+		rapidValue.SetString(stringValue->getValue().c_str(), stringValue->getValue().size(), document.GetAllocator());
+		return;
 	}
 	JSONBool* boolValue = dynamic_cast<JSONBool*>(value);
 	if (boolValue) {
-		rapidjson::Value rj;
-		rj.SetBool(boolValue->getValue());
-		return rj;
+		rapidValue.SetBool(boolValue->getValue());
+		return;
 	}
 	JSONArray* arrayValue = dynamic_cast<JSONArray*>(value);
 	if (arrayValue) {
-		rapidjson::Value array;
-		array.SetArray();
+		rapidValue.SetArray();
 		std::vector<JSONValue::ref> values = arrayValue->getValues();
 		for (size_t i = 0; i < values.size(); i++) {
-			array.PushBack(jsonValueToRapidJSON(values[i].get(), document), document->GetAllocator());
+			rapidjson::Value obj;
+			jsonValueToRapidJSON(values[i].get(), obj, document);
+			rapidValue.PushBack(obj, document.GetAllocator());
 		}
-		return array;
+		return;
 	}
 	JSONObject* objectValue = dynamic_cast<JSONObject*>(value);
 	if (objectValue) {
-		rapidjson::Value obj;
-		obj.SetObject();
+		rapidValue.SetObject();
 		typedef std::map<std::string, JSONValue::ref> ValuesMap;
 		ValuesMap values = objectValue->getValues();
 		for (ValuesMap::iterator it = values.begin(); it != values.end(); it++) {
-			//FIXME: Is StringRef appropriate here?
-			obj.AddMember(rapidjson::StringRef(it->first.c_str()), jsonValueToRapidJSON(it->second.get(), document), document->GetAllocator());
+			rapidjson::Value obj;
+			jsonValueToRapidJSON(it->second.get(), obj, document);
+			rapidjson::Value key;
+			key.SetString(it->first.c_str(), it->first.size(), document.GetAllocator());
+			rapidValue.AddMember(key, obj, document.GetAllocator());
 		}
-		return obj;
+		return;
 	}
 	assert(false);
 }
 
 std::string JSONObject::serialize() {
 	rapidjson::Document d;
-	d.SetObject();
-	d.Swap(jsonValueToRapidJSON(this, &d));
+	jsonValueToRapidJSON(this, d, d);
 
 	rapidjson::StringBuffer buffer;
 	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
