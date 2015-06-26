@@ -10,8 +10,10 @@
 #include <map>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/signals2.hpp>
 
 #include "PathVerb.h"
+#include "WebSocket.h"
 
 namespace librestpp {
 	class JSONRESTHandler;
@@ -26,6 +28,8 @@ namespace librestpp {
 			void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler);
 			void poll();
 			void run();
+		public:
+			boost::signals2::signal<void(boost::shared_ptr<WebSocket>)> onWebSocketConnection;
 
 		private:
 			//TODO: Get rid of PIMPL and expose enough websocketpp for eventloop integration

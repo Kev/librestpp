@@ -57,10 +57,30 @@ class RESTRequestInt : public RESTRequest {
 		std::stringstream reply_;
 };
 
+class WebSocketInt : public WebSocket {
+	public:
+		WebSocketInt(websocketpp::server<websocketpp::config::asio>::connection_ptr connection, websocketpp::server<websocketpp::config::asio>* server) : connection_(connection), server_(server) {
+			connection->set_message_handler(boost::bind(&WebSocketInt::handleMessageInt, this, _2));
+		}
+
+		void send(const std::string& message) {
+		  server_->send(connection_, message, websocketpp::frame::opcode::text);
+		}
+
+	private:
+		void handleMessageInt(websocketpp::server<websocketpp::config::asio>::message_ptr message) {
+			handleMessage(message->get_payload());
+		}
+	private:
+		websocketpp::server<websocketpp::config::asio>::connection_ptr connection_;
+		websocketpp::server<websocketpp::config::asio>* server_;
+};
+
 class RESTServer::Private {
 	public:
 		Private() {
-			server_.set_http_handler(boost::bind(&RESTServer::Private::handleRequest, this, _1));
+			server_.set_http_handler(boost::bind(&RESTServer::Private::handleHTTPRequest, this, _1));
+			server_.set_open_handler(boost::bind(&RESTServer::Private::handleNewWebSocket,this, _1));
 		}
 
 		bool start(int port) {
@@ -91,8 +111,16 @@ class RESTServer::Private {
 			server_.run();
 		}
 
+		boost::signals2::signal<void(boost::shared_ptr<WebSocket>)> onWebSocketConnection;
+
 	private:
-		void handleRequest(websocketpp::connection_hdl handle) {
+		void handleNewWebSocket(websocketpp::connection_hdl handle) {
+			websocketpp::server<websocketpp::config::asio>::connection_ptr connection = server_.get_con_from_hdl(handle);
+			WebSocket::ref webSocket = boost::make_shared<WebSocketInt>(connection, &server_);
+			onWebSocketConnection(webSocket);
+		}
+
+		void handleHTTPRequest(websocketpp::connection_hdl handle) {
 			websocketpp::server<websocketpp::config::asio>::connection_ptr connection = server_.get_con_from_hdl(handle);
 			std::string path = connection->get_uri()->get_resource();
 			std::string method = connection->get_request().get_method();
@@ -134,6 +162,7 @@ class RESTServer::Private {
 RESTServer::RESTServer(int port) {
 	private_ = boost::make_shared<RESTServer::Private>();
 	private_->start(port);
+	private_->onWebSocketConnection.connect(onWebSocketConnection);
 }
 
 RESTServer::~RESTServer() {

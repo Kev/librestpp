@@ -28,6 +28,8 @@ elif env["SCONS_STAGE"] == "build" :
 				"JSONRESTHandler.cpp",
 				"MemoryFileHandler.cpp",
 				"RESTRequest.cpp",
-				"RestServer.cpp"
+				"RestServer.cpp",
+				"WebSocket.cpp",
+				"WebSocketHinter.cpp"
 			  ]
 	restpp_env.Library("librestpp", sources)
