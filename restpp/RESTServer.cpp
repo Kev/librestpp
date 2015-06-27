@@ -71,7 +71,7 @@ class WebSocketInt : public WebSocket {
 		}
 
 		void send(const std::string& message) {
-		  server_->send(connection_, message, websocketpp::frame::opcode::text);
+			server_->send(connection_, message, websocketpp::frame::opcode::text);
 		}
 
 	private:

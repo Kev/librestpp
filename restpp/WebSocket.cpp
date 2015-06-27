@@ -13,14 +13,14 @@ WebSocket::WebSocket() {
 }
 
 void WebSocket::handleMessage(const std::string& message) {
-  boost::shared_ptr<JSONObject> obj = JSONObject::parse(message);
-  if (obj) {
-    onMessage(obj);
-  }
+	boost::shared_ptr<JSONObject> obj = JSONObject::parse(message);
+	if (obj) {
+		onMessage(obj);
+	}
 }
 
 void WebSocket::send(boost::shared_ptr<JSONObject> json) {
-  send(json->serialize());
+	send(json->serialize());
 }
 
 }
