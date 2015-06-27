@@ -18,6 +18,7 @@ class StringHandler : public JSONRESTHandler {
 		StringHandler(const std::string& result) : result_(result) {}
 		virtual void handleRequest(boost::shared_ptr<RESTRequest> request) {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
+			request->setContentType("text/plain");
 			request->addReplyContent(result_);
 			request->sendReply();
 		}
@@ -32,6 +33,7 @@ class TextEchoHandler : public JSONRESTHandler {
 		virtual void handleRequest(boost::shared_ptr<RESTRequest> request) {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			request->addReplyContent(request->getBody());
+			request->setContentType("text/plain");
 			request->sendReply();
 		}
 
@@ -46,8 +48,10 @@ class JSONEchoHandler : public JSONRESTHandler {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			if (!!json) {
 				request->addReplyContent(json);
+				request->setContentType("application/json");
 			}
 			else {
+				request->setContentType("text/plain");
 				request->addReplyContent("Invalid JSON sent");
 			}
 			request->sendReply();
@@ -64,8 +68,10 @@ class JSONChefHandler : public JSONRESTHandler {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			if (!!json) {
 				request->addReplyContent(boost::dynamic_pointer_cast<JSONObject>(chefify(json)));
+				request->setContentType("application/json");
 			}
 			else {
+				request->setContentType("text/plain");
 				request->addReplyContent("Invalid JSON sent");
 			}
 			request->sendReply();

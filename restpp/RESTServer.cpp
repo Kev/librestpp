@@ -22,7 +22,7 @@ namespace librestpp {
 
 class RESTRequestInt : public RESTRequest {
 	public:
-		RESTRequestInt(const PathVerb& pathVerb, const std::string& body, websocketpp::server<websocketpp::config::asio>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(connection) {
+		RESTRequestInt(const PathVerb& pathVerb, const std::string& body, websocketpp::server<websocketpp::config::asio>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(connection), contentType_("application/octet-stream") {
 
 		}
 
@@ -37,11 +37,17 @@ class RESTRequestInt : public RESTRequest {
 		}
 
 		void sendReply() {
+			connection_->replace_header("Content-Type", contentType_);
 			connection_->set_body(reply_.str());
 #ifndef RESTPP_NO_DEFER
 			/*websocketpp::lib::error_code ec = */connection_->send_http_response();
 #endif
 		}
+
+		void setContentType(const std::string& contentType) {
+			contentType_ = contentType;
+		}
+
 
 	private:
 
@@ -55,6 +61,7 @@ class RESTRequestInt : public RESTRequest {
 
 		websocketpp::server<websocketpp::config::asio>::connection_ptr connection_;
 		std::stringstream reply_;
+		std::string contentType_;
 };
 
 class WebSocketInt : public WebSocket {
