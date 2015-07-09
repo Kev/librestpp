@@ -48,6 +48,14 @@ class RESTRequestInt : public RESTRequest {
 			contentType_ = contentType;
 		}
 
+		boost::optional<std::string> getHeader(const std::string& header) {
+			boost::optional<std::string> result;
+			std::string value = connection_->get_request_header(header);
+			if (!value.empty()) {
+				result = value;
+			}
+			return result;
+		}
 
 	private:
 
@@ -55,6 +63,7 @@ class RESTRequestInt : public RESTRequest {
 			switch (code) {
 				//FIXME: More codes here
 				case RESTRequest::HTTP_OK: return websocketpp::http::status_code::ok;
+				case RESTRequest::HTTP_UNAUTHORIZED: return websocketpp::http::status_code::unauthorized;
 				default: return websocketpp::http::status_code::not_found;
 			}
 		}

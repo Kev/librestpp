@@ -6,8 +6,10 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 
+#include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "JSON.h"
@@ -16,7 +18,7 @@
 namespace librestpp {
 	class RESTRequest {
 		public:
-			enum ResultCode {HTTP_OK};
+			enum ResultCode {HTTP_OK, HTTP_UNAUTHORIZED};
 			RESTRequest(const PathVerb& pathVerb, const std::string& body);
 			virtual ~RESTRequest();
 
@@ -25,11 +27,16 @@ namespace librestpp {
 			virtual void addReplyContent(boost::shared_ptr<JSONObject> jsonContent);
 			virtual void setContentType(const std::string& contentType) = 0;
 			virtual void sendReply() = 0;
+			virtual boost::optional<std::string> getHeader(const std::string& header) = 0;
+			
 			const std::string& getBody(); //TODO: Switch to ByteArrayish things instead of strings
 			boost::shared_ptr<JSONObject> getJSON();
+			boost::optional<std::string> getCookie(const std::string& key);
+
 
 		private:
 			PathVerb pathVerb_;
 			std::string body_;
+			boost::optional<std::map<std::string, std::string> > cookies_;
 	};
 }
