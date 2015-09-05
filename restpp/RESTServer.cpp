@@ -94,14 +94,19 @@ class WebSocketInt : public WebSocket {
 
 class RESTServer::Private {
 	public:
-		Private() {
+		Private(boost::shared_ptr<boost::asio::io_service> ioService) : ioService_(ioService) {
 			server_.set_http_handler(boost::bind(&RESTServer::Private::handleHTTPRequest, this, _1));
 			server_.set_open_handler(boost::bind(&RESTServer::Private::handleNewWebSocket,this, _1));
 		}
 
 		bool start(int port) {
 			try {
-				server_.init_asio();
+				if (!!ioService_) {
+					server_.init_asio(ioService_.get());
+				}
+				else {
+					server_.init_asio();
+				}
 				server_.listen(port);
 				server_.start_accept();
 			}
@@ -170,13 +175,14 @@ class RESTServer::Private {
 			}
 		}
 
+		boost::shared_ptr<boost::asio::io_service> ioService_;
 		websocketpp::server<websocketpp::config::asio> server_;
 		std::map<PathVerb, boost::shared_ptr<JSONRESTHandler> > handlers_;
 		boost::shared_ptr<JSONRESTHandler> defaultHandler_;
 };
 
-RESTServer::RESTServer(int port) {
-	private_ = boost::make_shared<RESTServer::Private>();
+RESTServer::RESTServer(int port, boost::shared_ptr<boost::asio::io_service> ioService) {
+	private_ = boost::make_shared<RESTServer::Private>(ioService);
 	private_->start(port);
 	private_->onWebSocketConnection.connect(onWebSocketConnection);
 }

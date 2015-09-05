@@ -15,13 +15,19 @@
 #include "PathVerb.h"
 #include "WebSocket.h"
 
+namespace boost {
+	namespace asio {
+		class io_service;
+	}
+}
+
 namespace librestpp {
 	class JSONRESTHandler;
 
 	class RESTServer {
 		struct Private;
 		public:
-			RESTServer(int port);
+			RESTServer(int port, boost::shared_ptr<boost::asio::io_service>     ioService = boost::shared_ptr<boost::asio::io_service>());
 			virtual ~RESTServer();
 
 			void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler);
