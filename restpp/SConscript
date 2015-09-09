@@ -28,7 +28,7 @@ elif env["SCONS_STAGE"] == "build" :
 				"JSONRESTHandler.cpp",
 				"MemoryFileHandler.cpp",
 				"RESTRequest.cpp",
-				"RestServer.cpp",
+				"RESTServer.cpp",
 				"WebSocket.cpp",
 				"WebSocketHinter.cpp"
 			  ]
