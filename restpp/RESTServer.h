@@ -25,7 +25,7 @@ namespace librestpp {
 	class JSONRESTHandler;
 
 	class RESTServer {
-		struct Private;
+		class Private;
 		public:
 			RESTServer(int port, boost::shared_ptr<boost::asio::io_service>     ioService = boost::shared_ptr<boost::asio::io_service>());
 			virtual ~RESTServer();
