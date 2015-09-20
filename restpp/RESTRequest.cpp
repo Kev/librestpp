@@ -49,7 +49,12 @@ boost::optional<std::string> RESTRequest::getCookie(const std::string& key) {
 				std::string value = cookieHeader->substr(valueStart, semicolon - valueStart);
 				std::cerr << "Got key '" << key << "' and value '" << value << "'" << std::endl;
 				(*cookies_)[key] = value;
+				size_t oldStart = start;
 				start = semicolon + 1;
+				if (start <= oldStart) {
+					// We've looped over the size of size_t (probably because semicolon wasn't found)
+					start = cookieHeader->size();
+				}
 				while (start < cookieHeader->size() && (*cookieHeader)[start] == ' ') {
 					start++;
 				}
