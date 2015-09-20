@@ -26,4 +26,8 @@ void WebSocketHinter::sendModelHint(const std::string& uri) {
 	send(json);
 }
 
+WebSocket::ref WebSocketHinter::getWebSocket() {
+	return webSocket_;
+}
+
 }

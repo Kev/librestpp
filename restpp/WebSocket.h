@@ -21,6 +21,7 @@ namespace librestpp {
 			void send(boost::shared_ptr<JSONObject> json);
 		public:
 			boost::signals2::signal<void(boost::shared_ptr<JSONObject>)> onMessage;
+			boost::signals2::signal<void()> onClosed;
 		protected:
 			virtual void handleMessage(const std::string& message);
 	};

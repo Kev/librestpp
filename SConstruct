@@ -23,6 +23,7 @@ vars.Add(PathVariable("boost_libdir", "Boost library location", None, PathVariab
 vars.Add(BoolVariable("optimize", "Compile with optimizations turned on", "no"))
 vars.Add(BoolVariable("debug", "Compile with debug information", "yes"))
 vars.Add(BoolVariable("set_iterator_debug_level", "Set _ITERATOR_DEBUG_LEVEL=0", "yes"))
+
 ### presetup
 
 env = Environment(variables = vars)
@@ -168,7 +169,7 @@ for dir in os.listdir(Dir("#").abspath) :
     if os.path.isfile(sconscript) :
         modules.append(dir)
 
-# Flags
+# Stages
 for stage in ["flags", "build"] :
     env["SCONS_STAGE"] = stage
     SConscript(dirs = map(lambda x : root + "/" + x, modules))

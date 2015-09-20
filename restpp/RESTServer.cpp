@@ -77,6 +77,8 @@ class WebSocketInt : public WebSocket {
 	public:
 		WebSocketInt(websocketpp::server<websocketpp::config::asio>::connection_ptr connection, websocketpp::server<websocketpp::config::asio>* server) : connection_(connection), server_(server) {
 			connection->set_message_handler(boost::bind(&WebSocketInt::handleMessageInt, this, _2));
+			connection->set_close_handler(boost::bind(&WebSocketInt::handleClosedInt, this));
+			connection->set_fail_handler(boost::bind(&WebSocketInt::handleClosedInt, this));
 		}
 
 		void send(const std::string& message) {
@@ -86,6 +88,10 @@ class WebSocketInt : public WebSocket {
 	private:
 		void handleMessageInt(websocketpp::server<websocketpp::config::asio>::message_ptr message) {
 			handleMessage(message->get_payload());
+		}
+		
+		void handleClosedInt() {
+			onClosed();
 		}
 	private:
 		websocketpp::server<websocketpp::config::asio>::connection_ptr connection_;

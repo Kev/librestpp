@@ -22,6 +22,7 @@ namespace librestpp {
 			WebSocketHinter(WebSocket::ref webSocket);
 			void send(boost::shared_ptr<JSONObject> json);
 			void sendModelHint(const std::string& uri);
+			WebSocket::ref getWebSocket();
 		private:
 			WebSocket::ref webSocket_;
 	};

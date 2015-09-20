@@ -19,14 +19,14 @@
 
 namespace librestpp {
 	template<class T>
-	class SessionObjectRESTHandler : public JSONRESTHandler {
+	class SessionRESTHandler : public JSONRESTHandler {
 		public:
-			SessionObjectRESTHandler(boost::shared_ptr<SessionCollection<T> > sessions, boost::function<void(boost::shared_ptr<T>, boost::shared_ptr<RESTRequest>)> handler) : sessions_(sessions), handler_(handler) {}
-			virtual ~SessionObjectRESTHandler() {}
+			SessionRESTHandler(boost::shared_ptr<SessionCollection<T> > sessions, boost::function<void(T, boost::shared_ptr<RESTRequest>)> handler) : sessions_(sessions), handler_(handler) {}
+			virtual ~SessionRESTHandler() {}
 
 			virtual void handleRequest(boost::shared_ptr<RESTRequest> request) {
 				boost::optional<std::string> sessionKey = request->getCookie("librestpp_session");
-				boost::shared_ptr<T> session;
+				T session;
 				if (sessionKey) {
 					session = sessions_->getSession(*sessionKey);
 				}
@@ -42,6 +42,6 @@ namespace librestpp {
 			}
 		private:
 			boost::shared_ptr<SessionCollection<T> > sessions_;
-			boost::function<void(boost::shared_ptr<T>, boost::shared_ptr<RESTRequest>)> handler_;
+			boost::function<void(T, boost::shared_ptr<RESTRequest>)> handler_;
 	};
 }

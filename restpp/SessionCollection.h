@@ -7,16 +7,20 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 #include <boost/shared_ptr.hpp>
 
 namespace librestpp {
-  template <class T>
+  template <typename T>
 	class SessionCollection {
 		public:
-			SessionCollection();
-			virtual ~SessionCollection();
+			virtual ~SessionCollection() {}
 
-			virtual boost:shared_ptr<T> getSession(const std::string& sessionKey) = 0;
+			T getSession(const std::string& sessionKey) {
+                return sessions_[sessionKey];
+            };
+        protected:
+            std::map<std::string, T> sessions_;
 	};
 }
