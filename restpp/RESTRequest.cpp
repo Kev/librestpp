@@ -22,6 +22,10 @@ void RESTRequest::addReplyContent(boost::shared_ptr<JSONObject> jsonContent) {
 	addReplyContent(jsonContent->serialize());
 }
 
+void RESTRequest::addReplyContent(boost::shared_ptr<JSONArray> jsonContent) {
+	addReplyContent(jsonContent->serialize());
+}
+
 const std::string& RESTRequest::getBody() {
 	return body_;
 }

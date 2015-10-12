@@ -52,6 +52,7 @@ namespace librestpp {
 			JSONArray();
 			JSONValue::ref append(JSONValue::ref value);
 			std::vector<JSONValue::ref> getValues();
+			virtual std::string serialize();
 		private:
 			std::vector<JSONValue::ref> values_;
 	};

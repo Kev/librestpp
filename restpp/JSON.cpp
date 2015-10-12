@@ -139,6 +139,16 @@ std::string JSONObject::serialize() {
 	return buffer.GetString();
 }
 
+std::string JSONArray::serialize() {
+	rapidjson::Document d;
+	jsonValueToRapidJSON(this, d, d);
+
+	rapidjson::StringBuffer buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+	d.Accept(writer);
+	return buffer.GetString();
+}
+
 boost::shared_ptr<JSONValue> convertRapidJSON(const rapidjson::Value* json, size_t depth) {
 	if (depth > 20) {
 		/* stack overflow attack*/
