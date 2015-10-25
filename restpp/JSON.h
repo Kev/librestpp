@@ -61,6 +61,7 @@ namespace librestpp {
 		public:
 			JSONObject();
 			JSONValue::ref set(const std::string& key, JSONValue::ref value);
+			JSONValue::ref set(const std::string& key, const std::string& value);
 			/**
 			 * Parse the provided string, returning a NULL shared_ptr if the JSON
 			 * could not be parsed

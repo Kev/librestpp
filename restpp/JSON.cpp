@@ -76,6 +76,10 @@ JSONObject::JSONObject() {
 
 }
 
+JSONValue::ref JSONObject::set(const std::string& key, const std::string& value) {
+	return set(key, boost::make_shared<JSONString>(value));
+}
+
 JSONValue::ref JSONObject::set(const std::string& key, JSONValue::ref value) {
 	values_[key] = value;
 	return shared_from_this();
