@@ -70,6 +70,10 @@ if env["debug"] :
 elif env["PLATFORM"] == "win32" :
     env.Append(CCFLAGS = ["/MD"])
 
+if env["PLATFORM"] not in ['win32', 'win64']:
+    env.Append(CCFLAGS = ["-std=c++11"])
+
+
 root = Dir(".").abspath
 
 env.Decider('MD5-timestamp') # Slightly less slow change checking
