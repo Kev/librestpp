@@ -20,6 +20,8 @@ if os.name == "nt":
         vars.Add('mt', "manifest tool")
 vars.Add(PathVariable("boost_includedir", "Boost headers location", None, PathVariable.PathAccept))
 vars.Add(PathVariable("boost_libdir", "Boost library location", None, PathVariable.PathAccept))
+vars.Add(PathVariable("websocketpp_dir", "Websocketpp source location", None, PathVariable.PathAccept))
+vars.Add(PathVariable("rapidjson_dir", "RapidJSON source location", None, PathVariable.PathAccept))
 vars.Add(BoolVariable("optimize", "Compile with optimizations turned on", "no"))
 vars.Add(BoolVariable("debug", "Compile with debug information", "yes"))
 vars.Add(BoolVariable("set_iterator_debug_level", "Set _ITERATOR_DEBUG_LEVEL=0", "yes"))
@@ -145,14 +147,20 @@ conf.Finish()
 # Websocketpp
 
 websocketpp_flags = {}
-websocketpp_flags["CPPPATH"] = [Dir("./websocketpp").abspath]
+if env.get("websocketpp_dir", None) :
+    websocketpp_flags["CPPPATH"] = [Dir(env['websocketpp_dir']).abspath]
+else:
+    websocketpp_flags["CPPPATH"] = [Dir("./websocketpp").abspath]
 
 env['WEBSOCKETPP_FLAGS'] = websocketpp_flags
 
 # RapidJSON
 
 rapidjson_flags = {}
-rapidjson_flags["CPPPATH"] = [Dir("./rapidjson/include").abspath]
+if env.get("rapidjson_dir", None) :
+    rapidjson_flags["CPPPATH"] = [Dir(env['rapidjson_dir']+'/include').abspath]
+else:
+    rapidjson_flags["CPPPATH"] = [Dir("./rapidjson/include").abspath]
 
 env['RAPIDJSON_FLAGS'] = rapidjson_flags
 
