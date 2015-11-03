@@ -101,14 +101,14 @@ boost_conf_env = conf_env.Clone()
 boost_flags = {}
 
 if env.get("boost_libdir", None) :
-    boost_flags["LIBPATH"] = [env["boost_libdir"]]
+    boost_flags["LIBPATH"] = [Dir(env["boost_libdir"]).abspath]
 if env.get("boost_includedir", None) :
     if env["PLATFORM"] == "win32" or env["PLATFORM"] == "hpux" or env["PLATFORM"] == "sunos" :
-        boost_flags["CPPPATH"] = [env["boost_includedir"]]
+        boost_flags["CPPPATH"] = [Dir(env["boost_includedir"]).abspath]
     else :
         # Using isystem to avoid getting warnings from a system boost
         # Unfortunately, this also disables dependency tracking
-        boost_flags["CPPFLAGS"] = [("-isystem", env["boost_includedir"])]
+        boost_flags["CPPFLAGS"] = [("-isystem", Dir(env["boost_includedir"]).abspath)]
 
 boost_conf_env.MergeFlags(boost_flags)
 
