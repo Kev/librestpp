@@ -27,12 +27,29 @@ namespace librestpp {
 	class RESTServer {
 		class Private;
 		public:
-			RESTServer(int port, boost::shared_ptr<boost::asio::io_service>     ioService = boost::shared_ptr<boost::asio::io_service>());
+			RESTServer(boost::shared_ptr<boost::asio::io_service> ioService = boost::shared_ptr<boost::asio::io_service>());
 			virtual ~RESTServer();
 
 			void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler);
 			void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler);
+			/**
+			 * Start the server listening on the port. The io_service still needs to run underneath, by polling poll(),
+			 * by calling run() or by using an external io_service and running it outside the RESTServer.
+			 */
+			bool listen(int port);
+			/**
+			 * Set SO_REUSEADDR. Must be called before listen().
+			 */
+			void setReuseAddr(bool b);
+			/**
+			 * Poll the io_service for activity. Not generally useful (run the io_service instead).
+			 * Must not be called before listen().
+			 */
 			void poll();
+			/**
+			 * Run the io_service. Not needed where an external io_service is passed in.
+			 * Must not be called before listen().
+			 */
 			void run();
 		public:
 			boost::signals2::signal<void(boost::shared_ptr<WebSocket>)> onWebSocketConnection;

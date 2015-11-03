@@ -89,7 +89,7 @@ class WebSocketInt : public WebSocket {
 		void handleMessageInt(websocketpp::server<websocketpp::config::asio>::message_ptr message) {
 			handleMessage(message->get_payload());
 		}
-		
+
 		void handleClosedInt() {
 			onClosed();
 		}
@@ -120,6 +120,10 @@ class RESTServer::Private {
 				return false;
 			}
 			return true;
+		}
+
+		void setReuseAddr(bool b) {
+			server_.set_reuse_addr(b);
 		}
 
 		void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler) {
@@ -187,14 +191,21 @@ class RESTServer::Private {
 		boost::shared_ptr<JSONRESTHandler> defaultHandler_;
 };
 
-RESTServer::RESTServer(int port, boost::shared_ptr<boost::asio::io_service> ioService) {
+RESTServer::RESTServer(boost::shared_ptr<boost::asio::io_service> ioService) {
 	private_ = boost::make_shared<RESTServer::Private>(ioService);
-	private_->start(port);
 	private_->onWebSocketConnection.connect(onWebSocketConnection);
 }
 
 RESTServer::~RESTServer() {
 
+}
+
+bool RESTServer::listen(int port) {
+	return private_->start(port);
+}
+
+void RESTServer::setReuseAddr(bool b) {
+	private_->setReuseAddr(b);
 }
 
 void RESTServer::addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler) {
