@@ -32,4 +32,8 @@ elif env["SCONS_STAGE"] == "build" :
 				"WebSocket.cpp",
 				"WebSocketHinter.cpp"
 			  ]
-	restpp_env.Library("librestpp", sources)
+	if env["PLATFORM"] in ["win32", "win64"]:
+		libname = "restpp"
+	else:
+		libname = "librestpp"
+	restpp_env.Library(libname, sources)

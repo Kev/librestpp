@@ -91,8 +91,6 @@ conf.Finish()
 if ARGUMENTS.get("force-configure", 0) :
     SCons.SConf.SetCacheMode("force")
 
-env.AppendUnique(CCFLAGS=['-g'])
-
 ### dependencies
 
 # Boost
