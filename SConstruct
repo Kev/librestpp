@@ -55,7 +55,7 @@ if env["optimize"] :
         env.Append(CCFLAGS = ["-O2"])
 if env["debug"] :
     if env["PLATFORM"] == "win32" :
-        env.Append(CCFLAGS = ["/Zi"])
+        env.Append(CCFLAGS = ["/Zi", "/EHsc"])
         env.Append(LINKFLAGS = ["/DEBUG"])
         if GetOption("num_jobs") > 1 :
             env["CCPDBFLAGS"] = '/Fd${TARGET}.pdb'
