@@ -30,8 +30,6 @@ vars.Add(BoolVariable("set_iterator_debug_level", "Set _ITERATOR_DEBUG_LEVEL=0",
 
 env = Environment(variables = vars)
 Help(vars.GenerateHelpText(env))
-conf_env = env.Clone()
-conf = Configure(conf_env)
 
 if "cc" in env :
     env["CC"] = env["cc"]
@@ -73,8 +71,10 @@ elif env["PLATFORM"] == "win32" :
     env.Append(CCFLAGS = ["/MD"])
 
 if env["PLATFORM"] not in ['win32', 'win64']:
-    env.Append(CCFLAGS = ["-std=c++11"])
+    env.Append(CXXFLAGS = ["-std=c++11"])
 
+conf_env = env.Clone()
+conf = Configure(conf_env)
 
 root = Dir(".").abspath
 
