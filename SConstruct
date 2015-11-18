@@ -112,7 +112,7 @@ boost_conf_env.MergeFlags(boost_flags)
 
 conf = Configure(boost_conf_env)
 
-boostLibs = [("thread", None), ("chrono", None), ("system", "system/system_error.hpp")]
+boostLibs = [("system", "system/system_error.hpp"), ("thread", None), ("chrono", None)]
 allLibsPresent = True
 libNames = []
 
