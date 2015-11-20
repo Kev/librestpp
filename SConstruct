@@ -36,9 +36,15 @@ env_ENV = {
 
 if "MSVC_VERSION" in ARGUMENTS :
     env = Environment(ENV = env_ENV, variables = vars, MSVC_VERSION = ARGUMENTS["MSVC_VERSION"], platform = ARGUMENTS.get("PLATFORM", None))
-else :
+else:
     env = Environment(ENV = env_ENV, variables = vars, platform = ARGUMENTS.get("PLATFORM", None))
-    Help(vars.GenerateHelpText(env))
+
+if env["PLATFORM"] == "win32" :
+	#So we don't need to escalate with UAC
+	if "TMP" in os.environ.keys() :
+		env['ENV']['TMP'] = os.environ['TMP']
+
+Help(vars.GenerateHelpText(env))
 
 if "cc" in env :
     env["CC"] = env["cc"]
