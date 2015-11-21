@@ -6,12 +6,11 @@
 
 #pragma once
 
+#include <functional>
+#include <memory>
 #include <string>
 
-
-#include <boost/function.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "JSONRESTHandler.h"
 #include "SessionCollection.h"
@@ -21,10 +20,10 @@ namespace librestpp {
 	template<class T>
 	class SessionRESTHandler : public JSONRESTHandler {
 		public:
-			SessionRESTHandler(boost::shared_ptr<SessionCollection<T> > sessions, boost::function<void(T, boost::shared_ptr<RESTRequest>)> handler) : sessions_(sessions), handler_(handler) {}
+			SessionRESTHandler(std::shared_ptr<SessionCollection<T> > sessions, std::function<void(T, std::shared_ptr<RESTRequest>)> handler) : sessions_(sessions), handler_(handler) {}
 			virtual ~SessionRESTHandler() {}
 
-			virtual void handleRequest(boost::shared_ptr<RESTRequest> request) {
+			virtual void handleRequest(std::shared_ptr<RESTRequest> request) {
 				boost::optional<std::string> sessionKey = request->getCookie("librestpp_session");
 				T session;
 				if (sessionKey) {
@@ -41,7 +40,7 @@ namespace librestpp {
 				}
 			}
 		private:
-			boost::shared_ptr<SessionCollection<T> > sessions_;
-			boost::function<void(T, boost::shared_ptr<RESTRequest>)> handler_;
+			std::shared_ptr<SessionCollection<T> > sessions_;
+			std::function<void(T, std::shared_ptr<RESTRequest>)> handler_;
 	};
 }

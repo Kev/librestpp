@@ -10,8 +10,6 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-#include <boost/make_shared.hpp>
-
 namespace librestpp {
 
 JSONValue::~JSONValue() {
@@ -77,7 +75,7 @@ JSONObject::JSONObject() {
 }
 
 JSONValue::ref JSONObject::set(const std::string& key, const std::string& value) {
-	return set(key, boost::make_shared<JSONString>(value));
+	return set(key, std::make_shared<JSONString>(value));
 }
 
 JSONValue::ref JSONObject::set(const std::string& key, JSONValue::ref value) {
@@ -153,49 +151,49 @@ std::string JSONArray::serialize() {
 	return buffer.GetString();
 }
 
-boost::shared_ptr<JSONValue> convertRapidJSON(const rapidjson::Value* json, size_t depth) {
+std::shared_ptr<JSONValue> convertRapidJSON(const rapidjson::Value* json, size_t depth) {
 	if (depth > 20) {
 		/* stack overflow attack*/
-		return boost::shared_ptr<JSONValue>();
+		return std::shared_ptr<JSONValue>();
 	}
 	if (json->IsBool()) {
-		return boost::make_shared<JSONBool>(json->GetBool());
+		return std::make_shared<JSONBool>(json->GetBool());
 	}
 	if (json->IsInt()) {
-		return boost::make_shared<JSONInt>(json->GetInt());
+		return std::make_shared<JSONInt>(json->GetInt());
 	}
 	if (json->IsString()) {
-		return boost::make_shared<JSONString>(json->GetString());
+		return std::make_shared<JSONString>(json->GetString());
 	}
 	if (json->IsArray()) {
-		boost::shared_ptr<JSONArray> array = boost::make_shared<JSONArray>();
+		std::shared_ptr<JSONArray> array = std::make_shared<JSONArray>();
 		for (size_t i = 0; i < json->Size(); i++) {
 			array->append(convertRapidJSON(&json[i], depth + 1));
 		}
 		return array;
 	}
 	if (json->IsObject()) {
-		boost::shared_ptr<JSONObject> object = boost::make_shared<JSONObject>();
+		std::shared_ptr<JSONObject> object = std::make_shared<JSONObject>();
 		rapidjson::Value::ConstMemberIterator it = json->MemberBegin();
 		for (; it != json->MemberEnd(); it++) {
 			JSONValue::ref childValue = convertRapidJSON(&it->value, depth + 1);
 			if (!childValue) {
 				/* Let the failure bubble up */
-				return boost::shared_ptr<JSONValue>();
+				return std::shared_ptr<JSONValue>();
 			}
 			object->set(it->name.GetString(), childValue);
 		}
 		return object;
 	}
 	/* Fallthrough */
-	return boost::shared_ptr<JSONValue>();
+	return std::shared_ptr<JSONValue>();
 }
 
-boost::shared_ptr<JSONObject> JSONObject::parse(const std::string& source) {
+std::shared_ptr<JSONObject> JSONObject::parse(const std::string& source) {
 	rapidjson::Document d;
 	d.Parse(source.c_str());
 
-	return boost::dynamic_pointer_cast<JSONObject>(convertRapidJSON(&d, 0));
+	return std::dynamic_pointer_cast<JSONObject>(convertRapidJSON(&d, 0));
 }
 
 }

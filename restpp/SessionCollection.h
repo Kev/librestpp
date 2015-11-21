@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include <string>
-#include <map>
 
-#include <boost/shared_ptr.hpp>
+#include <map>
+#include <memory>
+#include <string>
 
 namespace librestpp {
   template <typename T>

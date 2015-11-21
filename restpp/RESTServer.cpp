@@ -6,10 +6,10 @@
 
 #include "RESTServer.h"
 
+#include <memory>
 #include <sstream>
 
 #include <boost/bind.hpp>
-#include <boost/make_shared.hpp>
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -100,7 +100,7 @@ class WebSocketInt : public WebSocket {
 
 class RESTServer::Private {
 	public:
-		Private(boost::shared_ptr<boost::asio::io_service> ioService) : ioService_(std::move(ioService)) {
+		Private(std::shared_ptr<boost::asio::io_service> ioService) : ioService_(std::move(ioService)) {
 			server_.set_http_handler(boost::bind(&RESTServer::Private::handleHTTPRequest, this, _1));
 			server_.set_open_handler(boost::bind(&RESTServer::Private::handleNewWebSocket,this, _1));
 		}
@@ -126,11 +126,11 @@ class RESTServer::Private {
 			server_.set_reuse_addr(b);
 		}
 
-		void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler) {
+		void addJSONEndpoint(const PathVerb& pathVerb, std::shared_ptr<JSONRESTHandler> handler) {
 			handlers_[pathVerb] = handler;
 		}
 
-		void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler) {
+		void addDefaultGetEndpoint(std::shared_ptr<JSONRESTHandler> handler) {
 			defaultHandler_ = handler;
 		}
 
@@ -142,12 +142,12 @@ class RESTServer::Private {
 			server_.run();
 		}
 
-		boost::signals2::signal<void(boost::shared_ptr<WebSocket>)> onWebSocketConnection;
+		boost::signals2::signal<void(std::shared_ptr<WebSocket>)> onWebSocketConnection;
 
 	private:
 		void handleNewWebSocket(websocketpp::connection_hdl handle) {
 			websocketpp::server<websocketpp::config::asio>::connection_ptr connection = server_.get_con_from_hdl(handle);
-			WebSocket::ref webSocket = boost::make_shared<WebSocketInt>(connection, &server_);
+			WebSocket::ref webSocket = std::make_shared<WebSocketInt>(connection, &server_);
 			onWebSocketConnection(webSocket);
 		}
 
@@ -167,9 +167,9 @@ class RESTServer::Private {
 			//TODO: Check resource exhaustion
 			std::string body = connection->get_request_body();
 			PathVerb pathVerb(path, verb);
-			boost::shared_ptr<RESTRequest> request = boost::make_shared<RESTRequestInt>(pathVerb, body, connection);
+			std::shared_ptr<RESTRequest> request = std::make_shared<RESTRequestInt>(pathVerb, body, connection);
 
-			boost::shared_ptr<JSONRESTHandler> handler = handlers_[pathVerb];
+			std::shared_ptr<JSONRESTHandler> handler = handlers_[pathVerb];
 			if (verb != PathVerb::INVALID && (!!handler || !!defaultHandler_)) {
 				if (!handler) {
 					handler = defaultHandler_;
@@ -185,14 +185,14 @@ class RESTServer::Private {
 			}
 		}
 
-		boost::shared_ptr<boost::asio::io_service> ioService_;
+		std::shared_ptr<boost::asio::io_service> ioService_;
 		websocketpp::server<websocketpp::config::asio> server_;
-		std::map<PathVerb, boost::shared_ptr<JSONRESTHandler> > handlers_;
-		boost::shared_ptr<JSONRESTHandler> defaultHandler_;
+		std::map<PathVerb, std::shared_ptr<JSONRESTHandler>> handlers_;
+		std::shared_ptr<JSONRESTHandler> defaultHandler_;
 };
 
-RESTServer::RESTServer(boost::shared_ptr<boost::asio::io_service> ioService) {
-	private_ = boost::make_shared<RESTServer::Private>(ioService);
+RESTServer::RESTServer(std::shared_ptr<boost::asio::io_service> ioService) {
+	private_ = std::make_shared<RESTServer::Private>(ioService);
 	private_->onWebSocketConnection.connect(onWebSocketConnection);
 }
 
@@ -208,11 +208,11 @@ void RESTServer::setReuseAddr(bool b) {
 	private_->setReuseAddr(b);
 }
 
-void RESTServer::addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler) {
+void RESTServer::addDefaultGetEndpoint(std::shared_ptr<JSONRESTHandler> handler) {
 	private_->addDefaultGetEndpoint(handler);
 }
 
-void RESTServer::addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler) {
+void RESTServer::addJSONEndpoint(const PathVerb& pathVerb, std::shared_ptr<JSONRESTHandler> handler) {
 	private_->addJSONEndpoint(pathVerb, handler);
 }
 

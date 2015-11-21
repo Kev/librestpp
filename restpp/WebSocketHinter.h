@@ -6,7 +6,8 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 #include "WebSocket.h"
 
@@ -18,9 +19,9 @@ namespace librestpp {
 	 */
 	class WebSocketHinter {
 		public:
-			typedef boost::shared_ptr<WebSocketHinter> ref;
+			typedef std::shared_ptr<WebSocketHinter> ref;
 			WebSocketHinter(WebSocket::ref webSocket);
-			void send(boost::shared_ptr<JSONObject> json);
+			void send(std::shared_ptr<JSONObject> json);
 			void sendModelHint(const std::string& uri);
 			WebSocket::ref getWebSocket();
 		private:

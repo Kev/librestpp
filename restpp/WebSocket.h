@@ -6,7 +6,9 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
+
 #include <boost/signals2.hpp>
 
 #include "JSON.h"
@@ -14,13 +16,13 @@
 namespace librestpp {
 	class WebSocket {
 		public:
-			typedef boost::shared_ptr<WebSocket> ref;
+			typedef std::shared_ptr<WebSocket> ref;
 			WebSocket();
 
 			virtual void send(const std::string& message) = 0;
-			void send(boost::shared_ptr<JSONObject> json);
+			void send(std::shared_ptr<JSONObject> json);
 		public:
-			boost::signals2::signal<void(boost::shared_ptr<JSONObject>)> onMessage;
+			boost::signals2::signal<void(std::shared_ptr<JSONObject>)> onMessage;
 			boost::signals2::signal<void()> onClosed;
 		protected:
 			virtual void handleMessage(const std::string& message);

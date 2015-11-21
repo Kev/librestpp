@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include <string>
 #include <map>
+#include <memory>
+#include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 
 #include "PathVerb.h"
@@ -27,11 +27,11 @@ namespace librestpp {
 	class RESTServer {
 		class Private;
 		public:
-			RESTServer(boost::shared_ptr<boost::asio::io_service> ioService = boost::shared_ptr<boost::asio::io_service>());
+			RESTServer(std::shared_ptr<boost::asio::io_service> ioService = std::shared_ptr<boost::asio::io_service>());
 			virtual ~RESTServer();
 
-			void addDefaultGetEndpoint(boost::shared_ptr<JSONRESTHandler> handler);
-			void addJSONEndpoint(const PathVerb& pathVerb, boost::shared_ptr<JSONRESTHandler> handler);
+			void addDefaultGetEndpoint(std::shared_ptr<JSONRESTHandler> handler);
+			void addJSONEndpoint(const PathVerb& pathVerb, std::shared_ptr<JSONRESTHandler> handler);
 			/**
 			 * Start the server listening on the port. The io_service still needs to run underneath, by polling poll(),
 			 * by calling run() or by using an external io_service and running it outside the RESTServer.
@@ -52,10 +52,10 @@ namespace librestpp {
 			 */
 			void run();
 		public:
-			boost::signals2::signal<void(boost::shared_ptr<WebSocket>)> onWebSocketConnection;
+			boost::signals2::signal<void(std::shared_ptr<WebSocket>)> onWebSocketConnection;
 
 		private:
 			//TODO: Get rid of PIMPL and expose enough websocketpp for eventloop integration
-			boost::shared_ptr<Private> private_;
+			std::shared_ptr<Private> private_;
 	};
 }

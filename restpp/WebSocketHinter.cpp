@@ -6,8 +6,8 @@
 
 #include "WebSocketHinter.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <string>
 
 namespace librestpp {
 
@@ -15,14 +15,14 @@ WebSocketHinter::WebSocketHinter(WebSocket::ref webSocket) : webSocket_(std::mov
 
 }
 
-void WebSocketHinter::send(boost::shared_ptr<JSONObject> json) {
+void WebSocketHinter::send(std::shared_ptr<JSONObject> json) {
 	webSocket_->send(json);
 }
 
 void WebSocketHinter::sendModelHint(const std::string& uri) {
-	boost::shared_ptr<JSONObject> json = boost::make_shared<JSONObject>();
-	json->set("type", boost::make_shared<JSONString>("ampersand-websocket-hint"));
-	json->set("urlRoot", boost::make_shared<JSONString>(uri));
+	std::shared_ptr<JSONObject> json = std::make_shared<JSONObject>();
+	json->set("type", std::make_shared<JSONString>("ampersand-websocket-hint"));
+	json->set("urlRoot", std::make_shared<JSONString>(uri));
 	send(json);
 }
 

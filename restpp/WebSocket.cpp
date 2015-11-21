@@ -6,6 +6,9 @@
 
 #include "WebSocket.h"
 
+#include <memory>
+#include <string>
+
 namespace librestpp {
 
 WebSocket::WebSocket() {
@@ -13,13 +16,13 @@ WebSocket::WebSocket() {
 }
 
 void WebSocket::handleMessage(const std::string& message) {
-	boost::shared_ptr<JSONObject> obj = JSONObject::parse(message);
+	std::shared_ptr<JSONObject> obj = JSONObject::parse(message);
 	if (obj) {
 		onMessage(obj);
 	}
 }
 
-void WebSocket::send(boost::shared_ptr<JSONObject> json) {
+void WebSocket::send(std::shared_ptr<JSONObject> json) {
 	send(json->serialize());
 }
 

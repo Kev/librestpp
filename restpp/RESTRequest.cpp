@@ -18,11 +18,11 @@ RESTRequest::~RESTRequest() {
 
 }
 
-void RESTRequest::addReplyContent(boost::shared_ptr<JSONObject> jsonContent) {
+void RESTRequest::addReplyContent(std::shared_ptr<JSONObject> jsonContent) {
 	addReplyContent(jsonContent->serialize());
 }
 
-void RESTRequest::addReplyContent(boost::shared_ptr<JSONArray> jsonContent) {
+void RESTRequest::addReplyContent(std::shared_ptr<JSONArray> jsonContent) {
 	addReplyContent(jsonContent->serialize());
 }
 
@@ -30,7 +30,7 @@ const std::string& RESTRequest::getBody() {
 	return body_;
 }
 
-boost::shared_ptr<JSONObject> RESTRequest::getJSON() {
+std::shared_ptr<JSONObject> RESTRequest::getJSON() {
 	return JSONObject::parse(body_);
 }
 

@@ -6,10 +6,9 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-
-#include <boost/shared_ptr.hpp>
 
 #include "JSONRESTHandler.h"
 
@@ -22,7 +21,7 @@ namespace librestpp {
 	class MemoryFileHandler : public JSONRESTHandler {
 		public:
 			MemoryFileHandler(const std::string& path);
-			virtual void handleRequest(boost::shared_ptr<RESTRequest> request);
+			virtual void handleRequest(std::shared_ptr<RESTRequest> request);
 
 		private:
 			std::vector<unsigned char> content_;

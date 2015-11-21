@@ -61,7 +61,7 @@ MemoryFileHandler::MemoryFileHandler(const std::string& pathString) {
 	}
 }
 
-void MemoryFileHandler::handleRequest(boost::shared_ptr<RESTRequest> request) {
+void MemoryFileHandler::handleRequest(std::shared_ptr<RESTRequest> request) {
 	request->setReplyHeader(RESTRequest::HTTP_OK);
 	request->setContentType(contentType_);
 	request->addReplyContent(byteArrayToString(content_));

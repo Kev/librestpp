@@ -5,7 +5,8 @@
  */
 
 #pragma once
-#include <boost/shared_ptr.hpp>
+
+#include <memory>
 
 #include "RESTRequest.h"
 
@@ -16,6 +17,6 @@ namespace librestpp {
 			JSONRESTHandler();
 			virtual ~JSONRESTHandler();
 
-			virtual void handleRequest(boost::shared_ptr<RESTRequest> request) = 0;
+			virtual void handleRequest(std::shared_ptr<RESTRequest> request) = 0;
 	};
 }
