@@ -15,8 +15,8 @@ using namespace librestpp;
 
 class StringHandler : public JSONRESTHandler {
 	public:
-		StringHandler(const std::string& result) : result_(result) {}
-		virtual void handleRequest(std::shared_ptr<RESTRequest> request) {
+		StringHandler(std::string  result) : result_(std::move(result)) {}
+		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			request->setContentType("text/plain");
 			request->addReplyContent(result_);
@@ -30,7 +30,7 @@ class StringHandler : public JSONRESTHandler {
 class TextEchoHandler : public JSONRESTHandler {
 	public:
 		TextEchoHandler() {}
-		virtual void handleRequest(std::shared_ptr<RESTRequest> request) {
+		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
 			request->setReplyHeader(RESTRequest::HTTP_OK);
 			request->addReplyContent(request->getBody());
 			request->setContentType("text/plain");
@@ -42,7 +42,7 @@ class TextEchoHandler : public JSONRESTHandler {
 class JSONEchoHandler : public JSONRESTHandler {
 	public:
 		JSONEchoHandler() {}
-		virtual void handleRequest(std::shared_ptr<RESTRequest> request) {
+		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
 			std::shared_ptr<JSONObject> json = request->getJSON();
 
 			request->setReplyHeader(RESTRequest::HTTP_OK);
@@ -62,7 +62,7 @@ class JSONEchoHandler : public JSONRESTHandler {
 class JSONChefHandler : public JSONRESTHandler {
 	public:
 		JSONChefHandler() {}
-		virtual void handleRequest(std::shared_ptr<RESTRequest> request) {
+		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
 			std::shared_ptr<JSONObject> json = request->getJSON();
 
 			request->setReplyHeader(RESTRequest::HTTP_OK);
@@ -84,8 +84,8 @@ class JSONChefHandler : public JSONRESTHandler {
 			if ((jsonObject = std::dynamic_pointer_cast<JSONObject>(value))) {
 				std::shared_ptr<JSONObject> result = std::make_shared<JSONObject>();
 				auto values = jsonObject->getValues();
-				for (auto it = values.begin(); it != values.end(); it++) {
-					result->set(it->first, chefify(it->second));
+				for (auto & value : values) {
+					result->set(value.first, chefify(value.second));
 				}
 				return result;
 			}
