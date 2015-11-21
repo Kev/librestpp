@@ -22,21 +22,21 @@ namespace librestpp {
 
 class RESTRequestInt : public RESTRequest {
 	public:
-		RESTRequestInt(const PathVerb& pathVerb, const std::string& body, websocketpp::server<websocketpp::config::asio>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(connection), contentType_("application/octet-stream") {
+		RESTRequestInt(const PathVerb& pathVerb, const std::string& body, websocketpp::server<websocketpp::config::asio>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(std::move(connection)), contentType_("application/octet-stream") {
 
 		}
 
-		void setReplyHeader(RESTRequest::ResultCode code) {
+		void setReplyHeader(RESTRequest::ResultCode code) override {
 			connection_->set_status(ourCodeToTheirCode(code));
 		}
 
-		void addReplyContent(const std::string& content) {
+		void addReplyContent(const std::string& content) override {
 			//TODO: When websocketpp supports partial responses, support them
 			//TODO: Binary responses
 			reply_ << content;
 		}
 
-		void sendReply() {
+		void sendReply() override {
 			connection_->replace_header("Content-Type", contentType_);
 			connection_->set_body(reply_.str());
 #ifndef RESTPP_NO_DEFER
@@ -44,11 +44,11 @@ class RESTRequestInt : public RESTRequest {
 #endif
 		}
 
-		void setContentType(const std::string& contentType) {
+		void setContentType(const std::string& contentType) override {
 			contentType_ = contentType;
 		}
 
-		boost::optional<std::string> getHeader(const std::string& header) {
+		boost::optional<std::string> getHeader(const std::string& header) override {
 			boost::optional<std::string> result;
 			std::string value = connection_->get_request_header(header);
 			if (!value.empty()) {
@@ -81,7 +81,7 @@ class WebSocketInt : public WebSocket {
 			connection->set_fail_handler(boost::bind(&WebSocketInt::handleClosedInt, this));
 		}
 
-		void send(const std::string& message) {
+		void send(const std::string& message) override {
 			server_->send(connection_, message, websocketpp::frame::opcode::text);
 		}
 
@@ -100,7 +100,7 @@ class WebSocketInt : public WebSocket {
 
 class RESTServer::Private {
 	public:
-		Private(boost::shared_ptr<boost::asio::io_service> ioService) : ioService_(ioService) {
+		Private(boost::shared_ptr<boost::asio::io_service> ioService) : ioService_(std::move(ioService)) {
 			server_.set_http_handler(boost::bind(&RESTServer::Private::handleHTTPRequest, this, _1));
 			server_.set_open_handler(boost::bind(&RESTServer::Private::handleNewWebSocket,this, _1));
 		}

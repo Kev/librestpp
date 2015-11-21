@@ -64,7 +64,7 @@ boost::optional<std::string> RESTRequest::getCookie(const std::string& key) {
 			}
 		}
 	}
-	std::map<std::string, std::string>::iterator it = cookies_->find(key);
+	auto it = cookies_->find(key);
 	boost::optional<std::string> cookie;
 	if (it != cookies_->end()) {
 		cookie = it->second;

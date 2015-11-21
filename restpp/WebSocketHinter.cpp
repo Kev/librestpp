@@ -11,7 +11,7 @@
 
 namespace librestpp {
 
-WebSocketHinter::WebSocketHinter(WebSocket::ref webSocket) : webSocket_(webSocket) {
+WebSocketHinter::WebSocketHinter(WebSocket::ref webSocket) : webSocket_(std::move(webSocket)) {
 
 }
 

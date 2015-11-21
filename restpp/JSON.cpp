@@ -109,9 +109,9 @@ void jsonValueToRapidJSON(JSONValue* value, rapidjson::Value& rapidValue, rapidj
 	if (arrayValue) {
 		rapidValue.SetArray();
 		std::vector<JSONValue::ref> values = arrayValue->getValues();
-		for (size_t i = 0; i < values.size(); i++) {
+		for (auto & value : values) {
 			rapidjson::Value obj;
-			jsonValueToRapidJSON(values[i].get(), obj, document);
+			jsonValueToRapidJSON(value.get(), obj, document);
 			rapidValue.PushBack(obj, document.GetAllocator());
 		}
 		return;
@@ -121,11 +121,11 @@ void jsonValueToRapidJSON(JSONValue* value, rapidjson::Value& rapidValue, rapidj
 		rapidValue.SetObject();
 		typedef std::map<std::string, JSONValue::ref> ValuesMap;
 		ValuesMap values = objectValue->getValues();
-		for (ValuesMap::iterator it = values.begin(); it != values.end(); it++) {
+		for (auto & value : values) {
 			rapidjson::Value obj;
-			jsonValueToRapidJSON(it->second.get(), obj, document);
+			jsonValueToRapidJSON(value.second.get(), obj, document);
 			rapidjson::Value key;
-			key.SetString(it->first.c_str(), it->first.size(), document.GetAllocator());
+			key.SetString(value.first.c_str(), value.first.size(), document.GetAllocator());
 			rapidValue.AddMember(key, obj, document.GetAllocator());
 		}
 		return;
