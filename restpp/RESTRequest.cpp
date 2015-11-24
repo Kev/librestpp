@@ -72,4 +72,8 @@ boost::optional<std::string> RESTRequest::getCookie(const std::string& key) {
 	return cookie;
 }
 
+const PathVerb& RESTRequest::getPathVerb() {
+	return pathVerb_;
+}
+
 }

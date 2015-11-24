@@ -24,11 +24,11 @@ elif env["SCONS_STAGE"] == "build" :
 	restpp_env.MergeFlags(restpp_env['WEBSOCKETPP_FLAGS'])
 	restpp_env.MergeFlags(restpp_env['RAPIDJSON_FLAGS'])
 	sources = [
+				"drivers/WebSocketPPASIOServerDriver.cpp",
 				"JSON.cpp",
 				"JSONRESTHandler.cpp",
 				"MemoryFileHandler.cpp",
 				"RESTRequest.cpp",
-				"RESTServer.cpp",
 				"WebSocket.cpp",
 				"WebSocketHinter.cpp"
 			  ]

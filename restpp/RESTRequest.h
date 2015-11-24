@@ -18,7 +18,7 @@
 namespace librestpp {
 	class RESTRequest {
 		public:
-			enum ResultCode {HTTP_OK, HTTP_UNAUTHORIZED};
+			enum ResultCode {HTTP_OK, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND};
 			RESTRequest(const PathVerb& pathVerb, const std::string& body);
 			virtual ~RESTRequest();
 
@@ -33,6 +33,8 @@ namespace librestpp {
 			const std::string& getBody(); //TODO: Switch to ByteArrayish things instead of strings
 			std::shared_ptr<JSONObject> getJSON();
 			boost::optional<std::string> getCookie(const std::string& key);
+
+			const PathVerb& getPathVerb();
 
 
 		private:

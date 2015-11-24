@@ -8,8 +8,10 @@
 
 #include <boost/thread.hpp>
 
+#include <restpp/drivers/WebSocketPPASIOServerDriver.h>
 #include <restpp/JSONRESTHandler.h>
 #include <restpp/RESTServer.h>
+
 
 using namespace librestpp;
 
@@ -98,7 +100,8 @@ class JSONChefHandler : public JSONRESTHandler {
 
 int main(int argc, const char* argv[])
 {
-	librestpp::RESTServer server;
+	auto driver = std::make_shared<WebSocketPPASIOServerDriver>();
+	librestpp::RESTServer<WebSocketPPASIOServerDriver> server(driver);
 
 	std::stringstream longString;
 	for (int i = 0; i < 70000; i++) {
@@ -125,6 +128,6 @@ int main(int argc, const char* argv[])
 
 	std::cout << "Starting demo server on port 1080, at paths /demo, /long and /echo (GET) and /echo, /echotext and /chef (POST)" << std::endl;
 
-	server.listen(1080);
-	server.run();
+	driver->listen(1080);
+	driver->run();
 }
