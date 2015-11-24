@@ -101,7 +101,7 @@ class JSONChefHandler : public JSONRESTHandler {
 int main(int argc, const char* argv[])
 {
 	auto driver = std::make_shared<WebSocketPPASIOServerDriver>();
-	librestpp::RESTServer<WebSocketPPASIOServerDriver> server(driver);
+	librestpp::RESTServer server(driver);
 
 	std::stringstream longString;
 	for (int i = 0; i < 70000; i++) {
