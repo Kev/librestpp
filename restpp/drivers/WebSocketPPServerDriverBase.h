@@ -12,7 +12,6 @@
 
 #include <boost/signals2.hpp>
 
-#include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
 #include "../PathVerb.h"
@@ -70,6 +69,10 @@ namespace librestpp {
 			 */
 			void run() {
 				server_.run();
+			}
+
+			websocketpp::server<T>& getServer() {
+				return server_;
 			}
 
 		private:

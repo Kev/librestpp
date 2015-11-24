@@ -25,6 +25,10 @@ vars.Add(PathVariable("rapidjson_dir", "RapidJSON source location", None, PathVa
 vars.Add(BoolVariable("optimize", "Compile with optimizations turned on", "no"))
 vars.Add(BoolVariable("debug", "Compile with debug information", "yes"))
 vars.Add(BoolVariable("set_iterator_debug_level", "Set _ITERATOR_DEBUG_LEVEL=0", "yes"))
+vars.Add(PackageVariable("openssl", "OpenSSL location", "yes"))
+vars.Add("openssl_libnames", "Comma-separated openssl library names to override defaults", None)
+vars.Add("openssl_include", "Location of OpenSSL include files (if not under (openssl)/include)", None)
+vars.Add("openssl_libdir", "Location of OpenSSL library files (if not under (openssl)/lib)", None)
 
 ### presetup
 
@@ -176,6 +180,47 @@ else:
     rapidjson_flags["CPPPATH"] = [Dir("./rapidjson/include").abspath]
 
 env['RAPIDJSON_FLAGS'] = rapidjson_flags
+
+# OpenSSL
+
+openssl_env = conf_env.Clone()
+use_openssl = bool(env["openssl"])
+openssl_prefix = ""
+if isinstance(env["openssl"], str) :
+	openssl_prefix = env["openssl"]
+openssl_flags = {}
+if openssl_prefix :
+	openssl_include = env.get("openssl_include", None)
+	openssl_libdir = env.get("openssl_libdir", None)
+	if openssl_include:
+		openssl_flags = {"CPPPATH":[openssl_include]}
+	else:
+		openssl_flags = { "CPPPATH": [os.path.join(openssl_prefix, "include")] }
+	if openssl_libdir:
+		openssl_flags["LIBPATH"] = [openssl_libdir]
+		env["OPENSSL_DIR"] = openssl_prefix
+	elif env["PLATFORM"] == "win32" :
+		openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib", "VC")]
+		env["OPENSSL_DIR"] = openssl_prefix
+	else :
+		openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib")]
+	openssl_env.MergeFlags(openssl_flags)
+
+openssl_conf = Configure(openssl_env)
+if use_openssl and openssl_conf.CheckCHeader("openssl/ssl.h") :
+	env["HAVE_OPENSSL"] = 1
+	env["OPENSSL_FLAGS"] = openssl_flags
+	openssl_libnames = env.get("openssl_libnames", None)
+	if openssl_libnames:
+		env["OPENSSL_FLAGS"]["LIBS"] = openssl_libnames.split(',')
+	elif env["PLATFORM"] == "win32" :
+		env["OPENSSL_FLAGS"]["LIBS"] = ["libeay32MD", "ssleay32MD"]
+	else:
+		env["OPENSSL_FLAGS"]["LIBS"] = ["ssl", "crypto"]
+else :
+	env["OPENSSL_FLAGS"] = {}
+
+openssl_conf.Finish()
 
 ### Now run the scripts
 

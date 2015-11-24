@@ -8,6 +8,7 @@
 
 #include <boost/thread.hpp>
 
+//#include <restpp/drivers/WebSocketPPASIOTLSServerDriver.h> // For TLS
 #include <restpp/drivers/WebSocketPPASIOServerDriver.h>
 #include <restpp/JSONRESTHandler.h>
 #include <restpp/RESTServer.h>
@@ -100,6 +101,9 @@ class JSONChefHandler : public JSONRESTHandler {
 
 int main(int argc, const char* argv[])
 {
+	// For TLS, use
+	// auto driver = std::make_shared<WebSocketPPASIOTLSServerDriver>([](boost::asio::ssl::context* ctx) {});
+	// and set up the context in the lambda, from http://www.boost.org/doc/libs/1_58_0/doc/html/boost_asio/reference/ssl__context.html
 	auto driver = std::make_shared<WebSocketPPASIOServerDriver>();
 	librestpp::RESTServer server(driver);
 

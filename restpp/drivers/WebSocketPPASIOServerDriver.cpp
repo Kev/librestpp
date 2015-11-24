@@ -6,6 +6,8 @@
 
 #include "WebSocketPPASIOServerDriver.h"
 
+#include <websocketpp/config/asio_no_tls.hpp>
+
 #include "WebSocketPPServerDriverBase.h"
 
 namespace librestpp {

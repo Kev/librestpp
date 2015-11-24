@@ -9,7 +9,7 @@ if env["SCONS_STAGE"] == "flags" :
 	restpp_env = env.Clone()
 	restpp_env.Append(LIBPATH = [Dir(".").abspath])
 	restpp_env.Append(LIBS = ['restpp'])
-	for dep in ['BOOST', 'WEBSOCKETPP', 'RAPIDJSON']:
+	for dep in ['OPENSSL', 'BOOST', 'WEBSOCKETPP', 'RAPIDJSON']:
 		restpp_env.Append(LIBPATH = restpp_env[dep+'_FLAGS'].get('LIBPATH', []))
 		restpp_env.Append(LIBS = restpp_env[dep+'_FLAGS'].get('LIBS', []))
 	restpp_env.Append(CPPPATH = [Dir("..").abspath])
@@ -20,6 +20,7 @@ if env["SCONS_STAGE"] == "flags" :
 	env["RESTPP_FLAGS"] = restpp_flags
 elif env["SCONS_STAGE"] == "build" :
 	restpp_env = env.Clone()
+	restpp_env.MergeFlags(restpp_env['OPENSSL_FLAGS'])
 	restpp_env.MergeFlags(restpp_env['BOOST_FLAGS'])
 	restpp_env.MergeFlags(restpp_env['WEBSOCKETPP_FLAGS'])
 	restpp_env.MergeFlags(restpp_env['RAPIDJSON_FLAGS'])
@@ -33,6 +34,8 @@ elif env["SCONS_STAGE"] == "build" :
 				"WebSocket.cpp",
 				"WebSocketHinter.cpp"
 			  ]
+	if env.get("HAVE_OPENSSL", False):
+		sources.append("drivers/WebSocketPPASIOTLSServerDriver.cpp")
 	if env["PLATFORM"] in ["win32", "win64"]:
 		libname = "restpp"
 	else:
