@@ -17,7 +17,7 @@ vars.Add('link', "Linker")
 vars.Add('linkflags', "Extra linker flags")
 vars.Add('ar', "Archiver (ar or lib)")
 if os.name == "nt":
-        vars.Add('mt', "manifest tool")
+    vars.Add('mt', "manifest tool")
 vars.Add(PathVariable("boost_includedir", "Boost headers location", None, PathVariable.PathAccept))
 vars.Add(PathVariable("boost_libdir", "Boost library location", None, PathVariable.PathAccept))
 vars.Add(PathVariable("websocketpp_dir", "Websocketpp source location", None, PathVariable.PathAccept))
@@ -44,9 +44,9 @@ else:
     env = Environment(ENV = env_ENV, variables = vars, platform = ARGUMENTS.get("PLATFORM", None))
 
 if env["PLATFORM"] == "win32" :
-	#So we don't need to escalate with UAC
-	if "TMP" in os.environ.keys() :
-		env['ENV']['TMP'] = os.environ['TMP']
+    #So we don't need to escalate with UAC
+    if "TMP" in os.environ.keys() :
+        env['ENV']['TMP'] = os.environ['TMP']
 
 Help(vars.GenerateHelpText(env))
 
@@ -187,40 +187,49 @@ openssl_env = conf_env.Clone()
 use_openssl = bool(env["openssl"])
 openssl_prefix = ""
 if isinstance(env["openssl"], str) :
-	openssl_prefix = env["openssl"]
+    openssl_prefix = env["openssl"]
 openssl_flags = {}
 if openssl_prefix :
-	openssl_include = env.get("openssl_include", None)
-	openssl_libdir = env.get("openssl_libdir", None)
-	if openssl_include:
-		openssl_flags = {"CPPPATH":[openssl_include]}
-	else:
-		openssl_flags = { "CPPPATH": [os.path.join(openssl_prefix, "include")] }
-	if openssl_libdir:
-		openssl_flags["LIBPATH"] = [openssl_libdir]
-		env["OPENSSL_DIR"] = openssl_prefix
-	elif env["PLATFORM"] == "win32" :
-		openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib", "VC")]
-		env["OPENSSL_DIR"] = openssl_prefix
-	else :
-		openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib")]
-	openssl_env.MergeFlags(openssl_flags)
+    openssl_include = env.get("openssl_include", None)
+    openssl_libdir = env.get("openssl_libdir", None)
+    if openssl_include:
+        openssl_flags = {"CPPPATH":[openssl_include]}
+    else:
+        openssl_flags = { "CPPPATH": [os.path.join(openssl_prefix, "include")] }
+    if openssl_libdir:
+        openssl_flags["LIBPATH"] = [openssl_libdir]
+        env["OPENSSL_DIR"] = openssl_prefix
+    elif env["PLATFORM"] == "win32" :
+        openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib", "VC")]
+        env["OPENSSL_DIR"] = openssl_prefix
+    else :
+        openssl_flags["LIBPATH"] = [os.path.join(openssl_prefix, "lib")]
+    openssl_env.MergeFlags(openssl_flags)
 
 openssl_conf = Configure(openssl_env)
 if use_openssl and openssl_conf.CheckCHeader("openssl/ssl.h") :
-	env["HAVE_OPENSSL"] = 1
-	env["OPENSSL_FLAGS"] = openssl_flags
-	openssl_libnames = env.get("openssl_libnames", None)
-	if openssl_libnames:
-		env["OPENSSL_FLAGS"]["LIBS"] = openssl_libnames.split(',')
-	elif env["PLATFORM"] == "win32" :
-		env["OPENSSL_FLAGS"]["LIBS"] = ["libeay32MD", "ssleay32MD"]
-	else:
-		env["OPENSSL_FLAGS"]["LIBS"] = ["ssl", "crypto"]
-else :
-	env["OPENSSL_FLAGS"] = {}
+    found_openssl = 1
 
 openssl_conf.Finish()
+
+if found_openssl:
+    boostssl_env = conf_env.Clone()
+    boostssl_env.MergeFlags(openssl_flags)
+    boostssl_env.MergeFlags(boost_flags)
+    boostssl_conf = Configure(boostssl_env)
+    if boostssl_conf.CheckCXXHeader("boost/asio/ssl.hpp"):
+        env["HAVE_OPENSSL"] = 1
+        env["OPENSSL_FLAGS"] = openssl_flags
+        openssl_libnames = env.get("openssl_libnames", None)
+        if openssl_libnames:
+            env["OPENSSL_FLAGS"]["LIBS"] = openssl_libnames.split(',')
+        elif env["PLATFORM"] == "win32" :
+            env["OPENSSL_FLAGS"]["LIBS"] = ["libeay32MD", "ssleay32MD"]
+        else:
+            env["OPENSSL_FLAGS"]["LIBS"] = ["ssl", "crypto"]
+    else :
+        env["OPENSSL_FLAGS"] = {}
+
 
 ### Now run the scripts
 
