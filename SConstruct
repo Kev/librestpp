@@ -187,7 +187,7 @@ openssl_env = conf_env.Clone()
 use_openssl = bool(env["openssl"])
 openssl_prefix = ""
 if isinstance(env["openssl"], str) :
-    openssl_prefix = env["openssl"]
+    openssl_prefix = Dir(env["openssl"]).abspath
 openssl_flags = {}
 if openssl_prefix :
     openssl_include = env.get("openssl_include", None)
