@@ -207,8 +207,9 @@ if openssl_prefix :
     openssl_env.MergeFlags(openssl_flags)
 
 openssl_conf = Configure(openssl_env)
+found_openssl = False
 if use_openssl and openssl_conf.CheckCHeader("openssl/ssl.h") :
-    found_openssl = 1
+    found_openssl = True
 
 openssl_conf.Finish()
 
