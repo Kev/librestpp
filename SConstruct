@@ -229,7 +229,9 @@ if found_openssl:
         else:
             env["OPENSSL_FLAGS"]["LIBS"] = ["ssl", "crypto"]
     else :
-        env["OPENSSL_FLAGS"] = {}
+        found_openssl = False
+if not found_openssl:
+    env["OPENSSL_FLAGS"] = {}
 
 
 ### Now run the scripts
