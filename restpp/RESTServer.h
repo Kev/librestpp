@@ -16,7 +16,7 @@
 #include "WebSocket.h"
 
 namespace librestpp {
-	class JSONRESTHandler;
+	class RESTHandler;
 	class RESTRequest;
 	class ServerDriver;
 
@@ -26,16 +26,17 @@ namespace librestpp {
 
 			~RESTServer();
 
-			void addDefaultGetEndpoint(std::shared_ptr<JSONRESTHandler> handler);
+			void addDefaultGetEndpoint(std::shared_ptr<RESTHandler> handler);
 
-			void addJSONEndpoint(const PathVerb& pathVerb, std::shared_ptr<JSONRESTHandler> handler);
+			void addEndpoint(const PathVerb& pathVerb, std::shared_ptr<RESTHandler> handler);
 		public:
 			boost::signals2::signal<void(std::shared_ptr<WebSocket>)> onWebSocketConnection;
 		private:
 			void handleRequest(std::shared_ptr<RESTRequest> request);
 		private:
-			std::map<PathVerb, std::shared_ptr<JSONRESTHandler>> handlers_;
-			std::shared_ptr<JSONRESTHandler> defaultHandler_;
+			std::map<PathVerb, std::shared_ptr<RESTHandler>> fullPathHandlers_;
+			std::map<PathVerb, std::shared_ptr<RESTHandler>> wildcardHandlers_;
+			std::shared_ptr<RESTHandler> defaultHandler_;
 			std::shared_ptr<ServerDriver> driver_;
 	};
 }

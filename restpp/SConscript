@@ -27,8 +27,8 @@ elif env["SCONS_STAGE"] == "build" :
 	sources = [
 				"drivers/WebSocketPPASIOServerDriver.cpp",
 				"JSON.cpp",
-				"JSONRESTHandler.cpp",
 				"MemoryFileHandler.cpp",
+				"RESTHandler.cpp",
 				"RESTRequest.cpp",
 				"RESTServer.cpp",
 				"WebSocket.cpp",

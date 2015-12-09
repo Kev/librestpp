@@ -34,12 +34,19 @@ namespace librestpp {
 			std::shared_ptr<JSONObject> getJSON();
 			boost::optional<std::string> getCookie(const std::string& key);
 
-			const PathVerb& getPathVerb();
+			const PathVerb& getPathVerb() const;
+			/**
+			 * If the PathVerb for this request had wildcard parts, those parameters
+			 * are provided here - otherwise empty.
+			 */
+			const std::vector<std::string>& getParameters() const;
+			void setParameters(const std::vector<std::string>& parameters);
 
 
 		private:
 			PathVerb pathVerb_;
 			std::string body_;
 			boost::optional<std::map<std::string, std::string> > cookies_;
+			std::vector<std::string> parameters_;
 	};
 }

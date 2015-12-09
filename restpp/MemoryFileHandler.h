@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "JSONRESTHandler.h"
+#include "RESTHandler.h"
 
 namespace librestpp {
 
@@ -18,7 +18,7 @@ namespace librestpp {
 	 * Cache a file contents in memory and serve.
 	 * N.B. Stores in a string, so text files only.
 	 */
-	class MemoryFileHandler : public JSONRESTHandler {
+	class MemoryFileHandler : public RESTHandler {
 		public:
 			MemoryFileHandler(const std::string& path);
 			virtual void handleRequest(std::shared_ptr<RESTRequest> request);

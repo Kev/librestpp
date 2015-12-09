@@ -12,13 +12,13 @@
 
 #include <boost/optional.hpp>
 
-#include "JSONRESTHandler.h"
+#include "RESTHandler.h"
 #include "SessionCollection.h"
 
 
 namespace librestpp {
 	template<class T>
-	class SessionRESTHandler : public JSONRESTHandler {
+	class SessionRESTHandler : public RESTHandler {
 		public:
 			SessionRESTHandler(std::shared_ptr<SessionCollection<T> > sessions, std::function<void(T, std::shared_ptr<RESTRequest>)> handler) : sessions_(sessions), handler_(handler) {}
 			virtual ~SessionRESTHandler() {}

@@ -4,15 +4,15 @@
  * See the LICENSE file for more information.
  */
 
-#include "JSONRESTHandler.h"
+#include "RESTHandler.h"
 
 namespace librestpp {
 
-JSONRESTHandler::JSONRESTHandler() {
+RESTHandler::RESTHandler() {
 
 }
 
-JSONRESTHandler::~JSONRESTHandler() {
+RESTHandler::~RESTHandler() {
 
 }
 

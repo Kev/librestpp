@@ -10,13 +10,13 @@
 
 //#include <restpp/drivers/WebSocketPPASIOTLSServerDriver.h> // For TLS
 #include <restpp/drivers/WebSocketPPASIOServerDriver.h>
-#include <restpp/JSONRESTHandler.h>
+#include <restpp/RESTHandler.h>
 #include <restpp/RESTServer.h>
 
 
 using namespace librestpp;
 
-class StringHandler : public JSONRESTHandler {
+class StringHandler : public RESTHandler {
 	public:
 		StringHandler(std::string  result) : result_(std::move(result)) {}
 		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
@@ -30,7 +30,7 @@ class StringHandler : public JSONRESTHandler {
 		std::string result_;
 };
 
-class TextEchoHandler : public JSONRESTHandler {
+class TextEchoHandler : public RESTHandler {
 	public:
 		TextEchoHandler() {}
 		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
@@ -42,7 +42,7 @@ class TextEchoHandler : public JSONRESTHandler {
 
 };
 
-class JSONEchoHandler : public JSONRESTHandler {
+class JSONEchoHandler : public RESTHandler {
 	public:
 		JSONEchoHandler() {}
 		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
@@ -62,7 +62,7 @@ class JSONEchoHandler : public JSONRESTHandler {
 
 };
 
-class JSONChefHandler : public JSONRESTHandler {
+class JSONChefHandler : public RESTHandler {
 	public:
 		JSONChefHandler() {}
 		virtual void handleRequest(std::shared_ptr<RESTRequest> request) override {
@@ -112,23 +112,23 @@ int main(int argc, const char* argv[])
 		longString << "Arr ";
 	}
 
-	std::shared_ptr<JSONRESTHandler> demoHandler = std::make_shared<StringHandler>("hi");
-	server.addJSONEndpoint(PathVerb("/demo", PathVerb::GET), demoHandler);
+	std::shared_ptr<RESTHandler> demoHandler = std::make_shared<StringHandler>("hi");
+	server.addEndpoint(PathVerb("/demo", PathVerb::GET), demoHandler);
 
-	std::shared_ptr<JSONRESTHandler> longHandler = std::make_shared<StringHandler>(longString.str());
-	server.addJSONEndpoint(PathVerb("/long", PathVerb::GET), longHandler);
+	std::shared_ptr<RESTHandler> longHandler = std::make_shared<StringHandler>(longString.str());
+	server.addEndpoint(PathVerb("/long", PathVerb::GET), longHandler);
 
-	std::shared_ptr<JSONRESTHandler> echoGetHandler = std::make_shared<StringHandler>("Echos must be POST");
-	server.addJSONEndpoint(PathVerb("/echo", PathVerb::GET), echoGetHandler);
+	std::shared_ptr<RESTHandler> echoGetHandler = std::make_shared<StringHandler>("Echos must be POST");
+	server.addEndpoint(PathVerb("/echo", PathVerb::GET), echoGetHandler);
 
-	std::shared_ptr<JSONRESTHandler> echoHandler = std::make_shared<JSONEchoHandler>();
-	server.addJSONEndpoint(PathVerb("/echo", PathVerb::POST), echoHandler);
+	std::shared_ptr<RESTHandler> echoHandler = std::make_shared<JSONEchoHandler>();
+	server.addEndpoint(PathVerb("/echo", PathVerb::POST), echoHandler);
 
-	std::shared_ptr<JSONRESTHandler> textEchoHandler = std::make_shared<TextEchoHandler>();
-	server.addJSONEndpoint(PathVerb("/echotext", PathVerb::POST), textEchoHandler);
+	std::shared_ptr<RESTHandler> textEchoHandler = std::make_shared<TextEchoHandler>();
+	server.addEndpoint(PathVerb("/echotext", PathVerb::POST), textEchoHandler);
 
-	std::shared_ptr<JSONRESTHandler> chefHandler = std::make_shared<JSONChefHandler>();
-	server.addJSONEndpoint(PathVerb("/chef", PathVerb::POST), chefHandler);
+	std::shared_ptr<RESTHandler> chefHandler = std::make_shared<JSONChefHandler>();
+	server.addEndpoint(PathVerb("/chef", PathVerb::POST), chefHandler);
 
 	std::cout << "Starting demo server on port 1080, at paths /demo, /long and /echo (GET) and /echo, /echotext and /chef (POST)" << std::endl;
 

@@ -12,10 +12,10 @@
 
 
 namespace librestpp {
-	class JSONRESTHandler {
+	class RESTHandler {
 		public:
-			JSONRESTHandler();
-			virtual ~JSONRESTHandler();
+			RESTHandler();
+			virtual ~RESTHandler();
 
 			virtual void handleRequest(std::shared_ptr<RESTRequest> request) = 0;
 	};
