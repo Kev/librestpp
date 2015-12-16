@@ -7,7 +7,7 @@
 #include "RESTServer.h"
 
 #include "drivers/ServerDriver.h"
-#include "RestHandler.h"
+#include "RESTHandler.h"
 #include "RESTRequest.h"
 
 namespace librestpp {
