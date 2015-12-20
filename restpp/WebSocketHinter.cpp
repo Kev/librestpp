@@ -22,7 +22,7 @@ void WebSocketHinter::send(std::shared_ptr<JSONObject> json) {
 void WebSocketHinter::sendModelHint(const std::string& uri) {
 	std::shared_ptr<JSONObject> json = std::make_shared<JSONObject>();
 	json->set("type", std::make_shared<JSONString>("ampersand-websocket-hint"));
-	json->set("urlRoot", std::make_shared<JSONString>(uri));
+	json->set("url", std::make_shared<JSONString>(uri));
 	send(json);
 }
 
