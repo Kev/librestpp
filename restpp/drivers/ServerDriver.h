@@ -13,7 +13,8 @@ namespace librestpp {
   class WebSocket;
 	class ServerDriver {
 		public:
+			virtual ~ServerDriver() {}
 			boost::signals2::signal<void(std::shared_ptr<WebSocket>)> onWebSocketConnection;
-      boost::signals2::signal<void(std::shared_ptr<RESTRequest>)> onRESTRequest;
+			boost::signals2::signal<void(std::shared_ptr<RESTRequest>)> onRESTRequest;
 	};
 }
