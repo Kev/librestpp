@@ -57,6 +57,9 @@ MemoryFileHandler::MemoryFileHandler(const std::string& pathString) {
 		else if (pathString.substr(pathString.size() - 5) == ".json") {
 			contentType_ = "application/json";
 		}
+		else if (pathString.substr(pathString.size() - 4) == ".svg") {
+			contentType_ = "image/svg+xml";
+		}
 	} catch (...) {
 	}
 }
