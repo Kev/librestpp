@@ -23,7 +23,7 @@ namespace librestpp {
 	template<typename T>
 	class WebSocketPPServerDriverBase {
 		public:
-			WebSocketPPServerDriverBase(ServerDriver* driver) : driver_(driver) {
+			WebSocketPPServerDriverBase(ServerDriver* driver, std::shared_ptr<boost::asio::io_service> ioService) : driver_(driver), ioService_(ioService) {
 				server_.set_http_handler(boost::bind(&WebSocketPPServerDriverBase::handleHTTPRequest, this, _1));
 				server_.set_open_handler(boost::bind(&WebSocketPPServerDriverBase::handleNewWebSocket,this, _1));
 

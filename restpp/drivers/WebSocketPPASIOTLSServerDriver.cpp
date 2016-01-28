@@ -16,7 +16,7 @@ namespace librestpp {
 
 class WebSocketPPASIOTLSServerDriver::Private {
   public:
-    Private(std::function<void (boost::asio::ssl::context*)> initTLS, std::shared_ptr<boost::asio::io_service> ioService, ServerDriver* driver) : initTLS_(initTLS), driverImplementation(driver) {
+    Private(std::function<void (boost::asio::ssl::context*)> initTLS, std::shared_ptr<boost::asio::io_service> ioService, ServerDriver* driver) : initTLS_(initTLS), driverImplementation(driver, ioService) {
       driverImplementation.getServer().set_tls_init_handler(boost::bind(&WebSocketPPASIOTLSServerDriver::Private::handleTLSInit, this, _1));
 
     }

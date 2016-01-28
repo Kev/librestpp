@@ -14,7 +14,7 @@ namespace librestpp {
 
 class WebSocketPPASIOServerDriver::Private {
   public:
-    Private(std::shared_ptr<boost::asio::io_service> ioService, ServerDriver* driver) : driverImplementation(driver) {
+    Private(std::shared_ptr<boost::asio::io_service> ioService, ServerDriver* driver) : driverImplementation(driver, ioService) {
 
     }
     WebSocketPPServerDriverBase<websocketpp::config::asio> driverImplementation;
