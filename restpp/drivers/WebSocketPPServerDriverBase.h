@@ -78,7 +78,7 @@ namespace librestpp {
 		private:
 			class WebSocketPPRestRequest : public RESTRequest {
 				public:
-					WebSocketPPRestRequest(const PathVerb& pathVerb, const std::string& body, typename websocketpp::server<T>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(std::move(connection)), contentType_("application/octet-stream") {
+					WebSocketPPRestRequest(const PathVerb& pathVerb, const std::string& body, typename websocketpp::server<T>::connection_ptr connection) : RESTRequest(pathVerb, body), connection_(std::move(connection)), contentTypeSet_(false) {
 
 					}
 
@@ -93,13 +93,18 @@ namespace librestpp {
 					}
 
 					void sendReply() override {
-						connection_->replace_header("Content-Type", contentType_);
+						if (!contentTypeSet_) {
+							connection_->replace_header("Content-Type", "application/octet-stream");
+						}
 						connection_->set_body(reply_.str());
 						/*websocketpp::lib::error_code ec = */connection_->send_http_response();
 					}
 
-					void setContentType(const std::string& contentType) override {
-						contentType_ = contentType;
+					void setReplyHeader(const std::string& header, const std::string& value) override {
+						if (header == "Content-Type") {
+							contentTypeSet_ = true;
+						}
+						connection_->replace_header(header, value);
 					}
 
 					boost::optional<std::string> getHeader(const std::string& header) override {
@@ -124,7 +129,7 @@ namespace librestpp {
 
 					typename websocketpp::server<T>::connection_ptr connection_;
 					std::stringstream reply_;
-					std::string contentType_;
+					bool contentTypeSet_;
 			};
 
 			class WebSocketPPWebSocket : public WebSocket {

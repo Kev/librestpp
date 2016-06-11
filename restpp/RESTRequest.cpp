@@ -7,6 +7,7 @@
 #include "RESTRequest.h"
 
 #include <iostream>
+#include <sstream>
 
 namespace librestpp {
 
@@ -82,6 +83,16 @@ const std::vector<std::string>& RESTRequest::getParameters() const {
 
 void RESTRequest::setParameters(const std::vector<std::string>& parameters) {
 	parameters_ = parameters;
+}
+
+void RESTRequest::setContentType(const std::string& contentType) {
+	setReplyHeader("Content-Type", contentType);
+}
+
+void RESTRequest::setLibrestppCookie(const std::string& cookieValue, size_t maxAgeSeconds) {
+	std::stringstream value;
+	value << "librestpp_session=" << cookieValue << ";max-age=" << maxAgeSeconds;
+	setReplyHeader("Set-Cookie", value.str());
 }
 
 }

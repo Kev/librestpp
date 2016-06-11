@@ -22,11 +22,13 @@ namespace librestpp {
 			RESTRequest(const PathVerb& pathVerb, const std::string& body);
 			virtual ~RESTRequest();
 
-			virtual void setReplyHeader(RESTRequest::ResultCode code) = 0;
+			virtual void setReplyHeader(RESTRequest::ResultCode code) = 0; //TODO: Rename this to something more sensible in the future
 			virtual void addReplyContent(const std::string& content) = 0; //TODO: Switch to ByteArrayish things instead of strings
 			virtual void addReplyContent(std::shared_ptr<JSONObject> jsonContent);
 			virtual void addReplyContent(std::shared_ptr<JSONArray> jsonContent);
-			virtual void setContentType(const std::string& contentType) = 0;
+			virtual void setReplyHeader(const std::string& header, const std::string& value) = 0;
+			virtual void setContentType(const std::string& contentType);
+			virtual void setLibrestppCookie(const std::string& value, size_t maxAgeSeconds);
 			virtual void sendReply() = 0;
 			virtual boost::optional<std::string> getHeader(const std::string& header) = 0;
 
