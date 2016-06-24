@@ -34,7 +34,7 @@ void RESTServer::addEndpoint(const PathVerb& pathVerb, std::shared_ptr<RESTHandl
 }
 
 void RESTServer::handleRequest(std::shared_ptr<RESTRequest> request)  {
-	const PathVerb& pathVerb = request->getPathVerb();
+	PathVerb pathVerb = request->getPathVerb().withoutQuery();
 	// First check the (easy) exact match handlers
 	std::shared_ptr<RESTHandler> handler = fullPathHandlers_[pathVerb];
 	if (!handler) {

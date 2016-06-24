@@ -23,6 +23,45 @@ namespace librestpp {
 			}
 		}
 
+		/**
+		 * Note: only for inbound PathVerbs, as wildcards will be wrongly detected
+		 * as query parts.
+		 */
+		PathVerb withoutQuery() const {
+			std::vector<std::string> parts;
+			boost::split(parts, path, boost::is_any_of("?"));
+			return PathVerb(parts[0], verb);
+		}
+
+		/**
+		 * Note: only for inbound PathVerbs, as wildcards will be wrongly detected
+		 * as query parts.
+		 */
+		std::vector<std::pair<std::string, std::string>> getEncodedQueryParts() const {
+			std::vector<std::pair<std::string, std::string>> result;
+			std::vector<std::string> parts;
+ 			boost::split(parts, path, boost::is_any_of("?"));
+			if (parts.size() < 2) {
+				return result;
+			}
+			std::vector<std::string> queries;
+			boost::split(queries, parts[1], boost::is_any_of("&"));
+			for (auto query : queries) {
+				std::vector<std::string> splitQuery;
+				boost::split(splitQuery, query, boost::is_any_of("="));
+				if (query.size() == 0) {
+					continue;
+				}
+				std::pair<std::string, std::string> queryPair;
+				queryPair.first = splitQuery[0];
+				if (query.size() > 1) {
+					queryPair.second = splitQuery[1];
+				}
+				result.push_back(queryPair);
+			}
+ 			return result;
+		 }
+
 		bool operator<(const PathVerb& other) const {
 			return other.verb == verb ? (path < other.path) : verb < other.verb;
 		}
