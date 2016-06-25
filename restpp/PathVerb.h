@@ -37,8 +37,8 @@ namespace librestpp {
 		 * Note: only for inbound PathVerbs, as wildcards will be wrongly detected
 		 * as query parts.
 		 */
-		std::vector<std::pair<std::string, std::string>> getEncodedQueryParts() const {
-			std::vector<std::pair<std::string, std::string>> result;
+		std::map<std::string, std::string> getEncodedQueryParts() const {
+			std::map<std::string, std::string> result;
 			std::vector<std::string> parts;
  			boost::split(parts, path, boost::is_any_of("?"));
 			if (parts.size() < 2) {
@@ -52,12 +52,11 @@ namespace librestpp {
 				if (query.size() == 0) {
 					continue;
 				}
-				std::pair<std::string, std::string> queryPair;
-				queryPair.first = splitQuery[0];
+				std::string second;
 				if (query.size() > 1) {
-					queryPair.second = splitQuery[1];
+					second = splitQuery[1];
 				}
-				result.push_back(queryPair);
+				result[splitQuery[0]] = second;
 			}
  			return result;
 		 }
