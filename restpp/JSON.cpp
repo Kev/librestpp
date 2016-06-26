@@ -29,6 +29,20 @@ JSONValue::ref JSONInt::set(int value) {
 	return shared_from_this();
 }
 
+JSONDouble::JSONDouble(double value) : value_(value) {
+
+}
+
+double JSONDouble::getValue() {
+	return value_;
+}
+
+JSONValue::ref JSONDouble::set(double value) {
+	value_ = value;
+	return shared_from_this();
+}
+
+
 JSONString::JSONString(const std::string& value) : value_(value) {
 
 }
@@ -88,6 +102,16 @@ std::map<std::string, JSONValue::ref> JSONObject::getValues() {
 }
 
 void jsonValueToRapidJSON(JSONValue* value, rapidjson::Value& rapidValue, rapidjson::Document& document) {
+	JSONNull* nullValue = dynamic_cast<JSONNull*>(value);
+	if (nullValue) {
+		rapidValue.SetNull();
+		return;
+	}
+	JSONDouble* doubleValue = dynamic_cast<JSONDouble*>(value);
+	if (doubleValue) {
+		rapidValue.SetDouble(doubleValue->getValue());
+		return;
+	}
 	JSONInt* intValue = dynamic_cast<JSONInt*>(value);
 	if (intValue) {
 		rapidValue.SetInt(intValue->getValue());
@@ -156,11 +180,17 @@ std::shared_ptr<JSONValue> convertRapidJSON(const rapidjson::Value* json, size_t
 		/* stack overflow attack*/
 		return std::shared_ptr<JSONValue>();
 	}
+	if (json->IsNull()) {
+		return std::make_shared<JSONNull>();
+	}
 	if (json->IsBool()) {
 		return std::make_shared<JSONBool>(json->GetBool());
 	}
 	if (json->IsInt()) {
 		return std::make_shared<JSONInt>(json->GetInt());
+	}
+	if (json->IsDouble()) {
+		return std::make_shared<JSONDouble>(json->GetDouble());
 	}
 	if (json->IsString()) {
 		return std::make_shared<JSONString>(json->GetString());

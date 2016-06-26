@@ -19,6 +19,9 @@ namespace librestpp {
 			virtual ~JSONValue();
 	};
 
+	class JSONNull : public JSONValue, public std::enable_shared_from_this<JSONNull> {
+	};
+
 	class JSONInt : public JSONValue, public std::enable_shared_from_this<JSONInt> {
 		public:
 			JSONInt(int value = 0);
@@ -26,6 +29,15 @@ namespace librestpp {
 			int getValue();
 		private:
 			int value_;
+	};
+
+	class JSONDouble : public JSONValue, public std::enable_shared_from_this<JSONDouble> {
+		public:
+			JSONDouble(double value = 0);
+			JSONValue::ref set(double value);
+			double getValue();
+		private:
+			double value_;
 	};
 
 	class JSONString : public JSONValue, public std::enable_shared_from_this<JSONString> {
