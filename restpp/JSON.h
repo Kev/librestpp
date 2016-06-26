@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Isode Limited.
+ * Copyright (c) 2015-2016 Isode Limited.
  * All rights reserved.
  * See the LICENSE file for more information.
  */
@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 namespace librestpp {
 
@@ -22,23 +24,26 @@ namespace librestpp {
 	class JSONNull : public JSONValue, public std::enable_shared_from_this<JSONNull> {
 	};
 
-	class JSONInt : public JSONValue, public std::enable_shared_from_this<JSONInt> {
+	class JSONNumber : public JSONValue, public std::enable_shared_from_this<JSONNumber> {
 		public:
-			JSONInt(int value = 0);
-			JSONValue::ref set(int value);
-			int getValue();
+			JSONNumber(int64_t value = 0);
+			JSONNumber(uint64_t value);
+			JSONNumber(double value);
+			JSONValue::ref set(int64_t value);
+			JSONValue::ref set(uint64_t value);
+			JSONValue::ref set(double value);
+			int64_t getInt64Value();
+			uint64_t getUInt64Value();
+			double getDoubleValue();
+			bool canBeInt64();
+			bool canBeUInt64();
+			bool canBeDouble();
 		private:
-			int value_;
+			boost::optional<int64_t> int64Value_;
+			boost::optional<uint64_t> uint64Value_;
+			boost::optional<double> doubleValue_;
 	};
 
-	class JSONDouble : public JSONValue, public std::enable_shared_from_this<JSONDouble> {
-		public:
-			JSONDouble(double value = 0);
-			JSONValue::ref set(double value);
-			double getValue();
-		private:
-			double value_;
-	};
 
 	class JSONString : public JSONValue, public std::enable_shared_from_this<JSONString> {
 		public:

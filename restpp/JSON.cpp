@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Isode Limited.
+ * Copyright (c) 2015-2016 Isode Limited.
  * All rights reserved.
  * See the LICENSE file for more information.
  */
@@ -16,29 +16,59 @@ JSONValue::~JSONValue() {
 
 }
 
-JSONInt::JSONInt(int value) : value_(value) {
+JSONNumber::JSONNumber(int64_t value) : int64Value_(value) {
 
 }
 
-int JSONInt::getValue() {
-	return value_;
+JSONNumber::JSONNumber(uint64_t value) : uint64Value_(value) {
+
 }
 
-JSONValue::ref JSONInt::set(int value) {
-	value_ = value;
+JSONNumber::JSONNumber(double value) : doubleValue_(value) {
+
+}
+
+
+int64_t JSONNumber::getInt64Value() {
+	return int64Value_.get();
+}
+
+uint64_t JSONNumber::getUInt64Value() {
+	return uint64Value_.get();
+}
+
+double JSONNumber::getDoubleValue() {
+	return doubleValue_.get();
+}
+
+bool JSONNumber::canBeInt64() {
+	//FIXME: conversions
+	return !!int64Value_;
+}
+
+bool JSONNumber::canBeUInt64() {
+	//FIXME: conversions
+	return !!uint64Value_;
+}
+
+bool JSONNumber::canBeDouble() {
+	//FIXME: conversions
+	return !!doubleValue_;
+}
+
+
+JSONValue::ref JSONNumber::set(int64_t value) {
+	int64Value_ = value;
 	return shared_from_this();
 }
 
-JSONDouble::JSONDouble(double value) : value_(value) {
-
+JSONValue::ref JSONNumber::set(uint64_t value) {
+	uint64Value_ = value;
+	return shared_from_this();
 }
 
-double JSONDouble::getValue() {
-	return value_;
-}
-
-JSONValue::ref JSONDouble::set(double value) {
-	value_ = value;
+JSONValue::ref JSONNumber::set(double value) {
+	doubleValue_ = value;
 	return shared_from_this();
 }
 
@@ -107,14 +137,17 @@ void jsonValueToRapidJSON(JSONValue* value, rapidjson::Value& rapidValue, rapidj
 		rapidValue.SetNull();
 		return;
 	}
-	JSONDouble* doubleValue = dynamic_cast<JSONDouble*>(value);
-	if (doubleValue) {
-		rapidValue.SetDouble(doubleValue->getValue());
-		return;
-	}
-	JSONInt* intValue = dynamic_cast<JSONInt*>(value);
-	if (intValue) {
-		rapidValue.SetInt(intValue->getValue());
+	JSONNumber* numberValue = dynamic_cast<JSONNumber*>(value);
+	if (numberValue) {
+		if (numberValue->canBeUInt64()) {
+			rapidValue.SetUint64(numberValue->getUInt64Value());
+		}
+		else if (numberValue->canBeInt64()) {
+			rapidValue.SetInt64(numberValue->getInt64Value());
+		}
+		else  {
+			rapidValue.SetDouble(numberValue->getDoubleValue());
+		}
 		return;
 	}
 	JSONString* stringValue = dynamic_cast<JSONString*>(value);
@@ -186,11 +219,14 @@ std::shared_ptr<JSONValue> convertRapidJSON(const rapidjson::Value* json, size_t
 	if (json->IsBool()) {
 		return std::make_shared<JSONBool>(json->GetBool());
 	}
-	if (json->IsInt()) {
-		return std::make_shared<JSONInt>(json->GetInt());
+	if (json->IsInt64()) {
+		return std::make_shared<JSONNumber>(json->GetInt64());
+	}
+	if (json->IsUint64()) {
+		return std::make_shared<JSONNumber>(json->GetUint64());
 	}
 	if (json->IsDouble()) {
-		return std::make_shared<JSONDouble>(json->GetDouble());
+		return std::make_shared<JSONNumber>(json->GetDouble());
 	}
 	if (json->IsString()) {
 		return std::make_shared<JSONString>(json->GetString());
