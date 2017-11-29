@@ -175,6 +175,12 @@ namespace librestpp {
 				else if (method == "POST") {
 					verb = PathVerb::POST;
 				}
+				else if (method == "PUT") {
+					verb = PathVerb::PUT;
+				}
+				else if (method == "PATCH") {
+					verb = PathVerb::PATCH;
+				}
 				//FIXME: Other verbs
 
 				//TODO: Check resource exhaustion

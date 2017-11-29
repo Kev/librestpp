@@ -15,7 +15,7 @@
 namespace librestpp {
 
 	struct PathVerb {
-		enum RESTVerb {GET, POST, INVALID};
+		enum RESTVerb {GET, POST, PUT, PATCH, INVALID};
 		PathVerb(const std::string& path, RESTVerb verb) : path(path), verb(verb) {
 			wildcard_ = path.find('?') < path.size();
 			if (wildcard_) {
