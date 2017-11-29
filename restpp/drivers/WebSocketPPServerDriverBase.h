@@ -13,6 +13,7 @@
 #include <boost/signals2.hpp>
 
 #include <websocketpp/server.hpp>
+#include <boost/optional.hpp>
 
 #include "../PathVerb.h"
 #include "../RESTRequest.h"
@@ -152,6 +153,15 @@ namespace librestpp {
 
 					void send(const std::string& message) override {
 						server_->send(connection_, message, websocketpp::frame::opcode::text);
+					}
+
+					boost::optional<std::string> getHeader(const std::string& header) override {
+						boost::optional<std::string> result;
+						std::string value = connection_->get_request_header(header);
+						if (!value.empty()) {
+							result = value;
+						}
+						return result;
 					}
 
 				private:

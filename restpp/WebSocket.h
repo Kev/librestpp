@@ -21,6 +21,8 @@ namespace librestpp {
 
 			virtual void send(const std::string& message) = 0;
 			void send(std::shared_ptr<JSONObject> json);
+			virtual boost::optional<std::string> getHeader(const std::string& header) = 0;
+			boost::optional<std::string> getCookie(const std::string& key);
 		public:
 			boost::signals2::signal<void(std::shared_ptr<JSONObject>)> onMessage;
 			boost::signals2::signal<void()> onClosed;
