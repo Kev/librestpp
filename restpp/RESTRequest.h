@@ -18,7 +18,7 @@
 namespace librestpp {
 	class RESTRequest {
 		public:
-			enum ResultCode {HTTP_OK, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND};
+			enum ResultCode {HTTP_OK, HTTP_UNAUTHORIZED, HTTP_NOT_FOUND, HTTP_BAD_REQUEST, HTTP_FORBIDDEN };
 			RESTRequest(const PathVerb& pathVerb, const std::string& body);
 			virtual ~RESTRequest();
 

@@ -124,12 +124,15 @@ namespace librestpp {
 							case RESTRequest::HTTP_OK: return websocketpp::http::status_code::ok;
 							case RESTRequest::HTTP_UNAUTHORIZED: return websocketpp::http::status_code::unauthorized;
 							case RESTRequest::HTTP_NOT_FOUND: return websocketpp::http::status_code::not_found;
+ 							case RESTRequest::HTTP_BAD_REQUEST: return websocketpp::http::status_code::bad_request;
+ 							case RESTRequest::HTTP_FORBIDDEN: return websocketpp::http::status_code::forbidden;
 						}
 					}
 
 					typename websocketpp::server<T>::connection_ptr connection_;
 					std::stringstream reply_;
 					bool contentTypeSet_;
+ 					boost::optional<std::string> cookie_;
 			};
 
 			class WebSocketPPWebSocket : public WebSocket {
