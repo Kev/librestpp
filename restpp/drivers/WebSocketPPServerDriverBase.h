@@ -96,6 +96,9 @@ namespace librestpp {
 						if (!contentTypeSet_) {
 							connection_->replace_header("Content-Type", "application/octet-stream");
 						}
+ 						if (cookie_) {
+ 							connection_->replace_header("Set-Cookie", *cookie_);
+ 						}
 						connection_->set_body(reply_.str());
 						/*websocketpp::lib::error_code ec = */connection_->send_http_response();
 					}
@@ -105,6 +108,10 @@ namespace librestpp {
 							contentTypeSet_ = true;
 						}
 						connection_->replace_header(header, value);
+					}
+
+					void setCookie(const std::string& cookie) override {
+						cookie_ = cookie;
 					}
 
 					boost::optional<std::string> getHeader(const std::string& header) override {

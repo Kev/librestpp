@@ -44,6 +44,7 @@ namespace librestpp {
 			const std::vector<std::string>& getParameters() const;
 			void setParameters(const std::vector<std::string>& parameters);
 
+			virtual void setCookie(const std::string& cookie) = 0;
 
 		private:
 			PathVerb pathVerb_;
