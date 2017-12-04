@@ -40,6 +40,9 @@ void RESTServer::handleRequest(std::shared_ptr<RESTRequest> request)  {
 	if (!handler) {
 		//If that's not found, look for a wildcard matcher
 		for (auto it : wildcardHandlers_) {
+			if (it.first.verb != pathVerb.verb) {
+				continue;
+			}
 			auto parameters = it.first.getParameters(pathVerb.path);
 			if (parameters) {
 				request->setParameters(parameters.get());
