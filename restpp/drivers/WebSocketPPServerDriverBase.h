@@ -151,6 +151,12 @@ namespace librestpp {
 						connection->set_fail_handler(boost::bind(&WebSocketPPWebSocket::handleClosedInt, this));
 					}
 
+					~WebSocketPPWebSocket() {
+						connection_->set_message_handler([](std::weak_ptr<void>, typename websocketpp::server<T>::message_ptr){});
+						connection_->set_close_handler([](std::weak_ptr<void>){});
+						connection_->set_fail_handler([](std::weak_ptr<void>){});
+					}
+
 					void send(const std::string& message) override {
 						server_->send(connection_, message, websocketpp::frame::opcode::text);
 					}
