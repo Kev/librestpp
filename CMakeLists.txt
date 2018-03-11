@@ -9,6 +9,7 @@ find_package(RapidJSON REQUIRED)
 find_package(Websocketpp REQUIRED)
 
 add_library(restpp
+    restpp/Cookies.cpp
     restpp/JSON.cpp
     restpp/MemoryFileHandler.cpp
     restpp/RESTHandler.cpp
@@ -28,6 +29,7 @@ include_directories(
     )
 
 set(HEADER_FILES 
+    restpp/Cookies.h
     restpp/JSON.h
     restpp/MemoryFileHandler.h
     restpp/PathVerb.h

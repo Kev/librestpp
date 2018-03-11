@@ -8,8 +8,10 @@
 
 #include <memory>
 #include <string>
+#include <map>
 
 #include <boost/signals2.hpp>
+#include <boost/optional.hpp>
 
 #include "JSON.h"
 
@@ -28,5 +30,8 @@ namespace librestpp {
 			boost::signals2::signal<void()> onClosed;
 		protected:
 			virtual void handleMessage(const std::string& message);
+
+		private:
+			boost::optional<std::map<std::string, std::string> > cookies_;
 	};
 }
